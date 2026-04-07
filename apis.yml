@@ -9,10 +9,10 @@ description: >-
 type: Index
 image: https://kinlane-productions.s3.amazonaws.com/apis-json/apis-json-logo.jpg
 tags:
-  - Horoscope
   - Astrology
-  - Zodiac
   - Content
+  - Horoscope
+  - Zodiac
 url: >-
   https://raw.githubusercontent.com/api-evangelist/horoscope-api/refs/heads/main/apis.yml
 created: '2025-01-07'
@@ -28,8 +28,8 @@ apis:
     humanURL: https://horoscope-app-api.vercel.app/
     baseURL: https://horoscope-app-api.vercel.app/api/v1
     tags:
-      - Horoscope
       - Astrology
+      - Horoscope
     properties:
       - type: Documentation
         url: https://horoscope-app-api.vercel.app/
