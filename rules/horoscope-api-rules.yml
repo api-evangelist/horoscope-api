@@ -1,0 +1,16 @@
+aid: horoscope-api
+name: Horoscope API Rules
+description: >-
+  Operational and design rules for the Horoscope API, providing daily, weekly,
+  and monthly zodiac horoscopes in JSON.
+rules:
+  - id: openapi-required
+    description: An OpenAPI 3.x specification must be maintained for the Horoscope API.
+  - id: zodiac-enum
+    description: All horoscope endpoints must validate the sign parameter against the 12 zodiac signs.
+  - id: response-shape
+    description: Responses must wrap horoscope content under a top-level data object including date, period, sign, and horoscope text.
+  - id: case-insensitive
+    description: The sign parameter must be accepted case-insensitively.
+  - id: stable-paths
+    description: Endpoint paths must remain backwards-compatible under /api/v1/get-horoscope/.

@@ -1,0 +1,155 @@
+openapi: 3.0.3
+info:
+  title: Horoscope API
+  description: >-
+    The Horoscope API provides daily, weekly, and monthly horoscope predictions
+    for each zodiac sign, delivering personalized astrological insights in JSON
+    format.
+  version: 1.0.0
+  contact:
+    name: API Evangelist
+    email: kin@apievangelist.com
+  license:
+    name: Open
+servers:
+  - url: https://freehoroscopeapi.com
+    description: Production
+tags:
+  - name: Horoscope
+    description: Horoscope predictions by zodiac sign
+paths:
+  /api/v1/get-horoscope/daily:
+    get:
+      summary: Get Daily Horoscope
+      description: Returns daily horoscope for the specified zodiac sign.
+      operationId: getDailyHoroscope
+      tags:
+        - Horoscope
+      parameters:
+        - name: sign
+          in: query
+          required: true
+          description: Zodiac sign (case-insensitive).
+          schema:
+            type: string
+            enum:
+              - aries
+              - taurus
+              - gemini
+              - cancer
+              - leo
+              - virgo
+              - libra
+              - scorpio
+              - sagittarius
+              - capricorn
+              - aquarius
+              - pisces
+      responses:
+        '200':
+          description: Daily horoscope response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HoroscopeResponse'
+        '400':
+          description: Bad request.
+  /api/v1/get-horoscope/weekly:
+    get:
+      summary: Get Weekly Horoscope
+      description: Returns weekly horoscope for the specified zodiac sign.
+      operationId: getWeeklyHoroscope
+      tags:
+        - Horoscope
+      parameters:
+        - name: sign
+          in: query
+          required: true
+          description: Zodiac sign (case-insensitive).
+          schema:
+            type: string
+            enum:
+              - aries
+              - taurus
+              - gemini
+              - cancer
+              - leo
+              - virgo
+              - libra
+              - scorpio
+              - sagittarius
+              - capricorn
+              - aquarius
+              - pisces
+      responses:
+        '200':
+          description: Weekly horoscope response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HoroscopeResponse'
+        '400':
+          description: Bad request.
+  /api/v1/get-horoscope/monthly:
+    get:
+      summary: Get Monthly Horoscope
+      description: Returns monthly horoscope for the specified zodiac sign.
+      operationId: getMonthlyHoroscope
+      tags:
+        - Horoscope
+      parameters:
+        - name: sign
+          in: query
+          required: true
+          description: Zodiac sign (case-insensitive).
+          schema:
+            type: string
+            enum:
+              - aries
+              - taurus
+              - gemini
+              - cancer
+              - leo
+              - virgo
+              - libra
+              - scorpio
+              - sagittarius
+              - capricorn
+              - aquarius
+              - pisces
+      responses:
+        '200':
+          description: Monthly horoscope response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HoroscopeResponse'
+        '400':
+          description: Bad request.
+components:
+  schemas:
+    HoroscopeResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            date:
+              type: string
+              description: Date or range for the horoscope.
+              example: '2026-02-25'
+            period:
+              type: string
+              enum:
+                - daily
+                - weekly
+                - monthly
+            sign:
+              type: string
+              example: Aries
+            horoscope:
+              type: string
+              description: Horoscope prediction text.
+            horoscope_data:
+              type: string
+              description: Alternate horoscope content key returned by some endpoints.
