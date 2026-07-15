@@ -37,6 +37,8 @@ apis:
       - type: Rules
         url: https://raw.githubusercontent.com/api-evangelist/horoscope-api/refs/heads/main/rules/horoscope-api-rules.yml
 common:
+  - type: AgenticAccess
+    url: agentic-access/horoscope-api-agentic-access.yml
   - type: DomainSecurity
     url: security/horoscope-api-domain-security.yml
   - type: Website
