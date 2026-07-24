@@ -1,10 +1,7 @@
 openapi: 3.0.3
 info:
   title: Horoscope API
-  description: >-
-    The Horoscope API provides daily, weekly, and monthly horoscope predictions
-    for each zodiac sign, delivering personalized astrological insights in JSON
-    format.
+  description: The Horoscope API provides daily, weekly, and monthly horoscope predictions for each zodiac sign, delivering personalized astrological insights in JSON format.
   version: 1.0.0
   contact:
     name: API Evangelist
@@ -12,11 +9,11 @@ info:
   license:
     name: Open
 servers:
-  - url: https://freehoroscopeapi.com
-    description: Production
+- url: https://freehoroscopeapi.com
+  description: Production
 tags:
-  - name: Horoscope
-    description: Horoscope predictions by zodiac sign
+- name: Horoscope
+  description: Horoscope predictions by zodiac sign
 paths:
   /api/v1/get-horoscope/daily:
     get:
@@ -24,27 +21,27 @@ paths:
       description: Returns daily horoscope for the specified zodiac sign.
       operationId: getDailyHoroscope
       tags:
-        - Horoscope
+      - Horoscope
       parameters:
-        - name: sign
-          in: query
-          required: true
-          description: Zodiac sign (case-insensitive).
-          schema:
-            type: string
-            enum:
-              - aries
-              - taurus
-              - gemini
-              - cancer
-              - leo
-              - virgo
-              - libra
-              - scorpio
-              - sagittarius
-              - capricorn
-              - aquarius
-              - pisces
+      - name: sign
+        in: query
+        required: true
+        description: Zodiac sign (case-insensitive).
+        schema:
+          type: string
+          enum:
+          - aries
+          - taurus
+          - gemini
+          - cancer
+          - leo
+          - virgo
+          - libra
+          - scorpio
+          - sagittarius
+          - capricorn
+          - aquarius
+          - pisces
       responses:
         '200':
           description: Daily horoscope response.
@@ -60,27 +57,27 @@ paths:
       description: Returns weekly horoscope for the specified zodiac sign.
       operationId: getWeeklyHoroscope
       tags:
-        - Horoscope
+      - Horoscope
       parameters:
-        - name: sign
-          in: query
-          required: true
-          description: Zodiac sign (case-insensitive).
-          schema:
-            type: string
-            enum:
-              - aries
-              - taurus
-              - gemini
-              - cancer
-              - leo
-              - virgo
-              - libra
-              - scorpio
-              - sagittarius
-              - capricorn
-              - aquarius
-              - pisces
+      - name: sign
+        in: query
+        required: true
+        description: Zodiac sign (case-insensitive).
+        schema:
+          type: string
+          enum:
+          - aries
+          - taurus
+          - gemini
+          - cancer
+          - leo
+          - virgo
+          - libra
+          - scorpio
+          - sagittarius
+          - capricorn
+          - aquarius
+          - pisces
       responses:
         '200':
           description: Weekly horoscope response.
@@ -96,27 +93,27 @@ paths:
       description: Returns monthly horoscope for the specified zodiac sign.
       operationId: getMonthlyHoroscope
       tags:
-        - Horoscope
+      - Horoscope
       parameters:
-        - name: sign
-          in: query
-          required: true
-          description: Zodiac sign (case-insensitive).
-          schema:
-            type: string
-            enum:
-              - aries
-              - taurus
-              - gemini
-              - cancer
-              - leo
-              - virgo
-              - libra
-              - scorpio
-              - sagittarius
-              - capricorn
-              - aquarius
-              - pisces
+      - name: sign
+        in: query
+        required: true
+        description: Zodiac sign (case-insensitive).
+        schema:
+          type: string
+          enum:
+          - aries
+          - taurus
+          - gemini
+          - cancer
+          - leo
+          - virgo
+          - libra
+          - scorpio
+          - sagittarius
+          - capricorn
+          - aquarius
+          - pisces
       responses:
         '200':
           description: Monthly horoscope response.
@@ -141,9 +138,9 @@ components:
             period:
               type: string
               enum:
-                - daily
-                - weekly
-                - monthly
+              - daily
+              - weekly
+              - monthly
             sign:
               type: string
               example: Aries
