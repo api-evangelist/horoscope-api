@@ -5,9 +5,21 @@ description: >-
   to each zodiac sign. With intuitive endpoints, developers can seamlessly integrate astrological insights into their
   applications, delivering accurate and personalized horoscope data in JSON format.
 type: Index
+accessModel:
+  pricing: freemium
+  onboarding: unknown
+  trial: false
+  try_now: false
+  public: false
+  label: Freemium
+  confidence: medium
+  source:
+  - plans
+  generated: '2026-07-22'
+  method: derived
 position: Consumer
 access: 3rd-Party
-image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/horoscope-api.png
 tags:
   - Astrology
   - Content
@@ -18,24 +30,21 @@ created: '2025-01-07'
 modified: '2026-05-19'
 specificationVersion: '0.20'
 apis:
-  - aid: horoscope-api:horoscope-api
-    name: Horoscope API
-    description: >-
-      The Horoscope API provides daily, weekly, and monthly horoscope predictions for each zodiac sign, delivering
-      personalized astrological insights in JSON format.
-    humanURL: https://freehoroscopeapi.com
-    baseURL: https://freehoroscopeapi.com/api/v1
-    tags:
-      - Astrology
-      - Horoscope
-    properties:
-      - type: Documentation
-        url: https://freehoroscopeapi.com
-      - type: OpenAPI
-        url: >-
-          https://raw.githubusercontent.com/api-evangelist/horoscope-api/refs/heads/main/openapi/horoscope-api-openapi.yml
-      - type: Rules
-        url: https://raw.githubusercontent.com/api-evangelist/horoscope-api/refs/heads/main/rules/horoscope-api-rules.yml
+- aid: horoscope-api:horoscope-api-horoscope-api
+  name: Horoscope API Horoscope API
+  description: Horoscope predictions by zodiac sign
+  humanURL: https://freehoroscopeapi.com
+  baseURL: https://freehoroscopeapi.com/api/v1
+  tags:
+  - Horoscope
+  properties:
+  - type: OpenAPI
+    url: openapi/horoscope-api-horoscope-api-openapi.yml
+  - type: Documentation
+    url: https://freehoroscopeapi.com
+  - type: Rules
+    url: >-
+      https://raw.githubusercontent.com/api-evangelist/horoscope-api/refs/heads/main/rules/horoscope-api-rules.yml
 common:
   - type: AgenticAccess
     url: agentic-access/horoscope-api-agentic-access.yml
