@@ -1,0 +1,14 @@
+{
+  "provider": "horoscope-api",
+  "sources": [
+    "horoscope-api-horoscope-api-openapi.yml"
+  ],
+  "outputs": [
+    "horoscope-api-horoscope-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [],
+  "skipped": []
+}
