@@ -1,0 +1,75 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Horoscope API",
+    "version": "1.0.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Horoscope",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get Daily Horoscope",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://freehoroscopeapi.com/api/v1/get-horoscope/daily",
+            "params": [
+              {
+                "name": "sign",
+                "value": "",
+                "type": "query",
+                "description": "Zodiac sign (case-insensitive)."
+              }
+            ]
+          },
+          "docs": "Returns daily horoscope for the specified zodiac sign."
+        },
+        {
+          "info": {
+            "name": "Get Weekly Horoscope",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://freehoroscopeapi.com/api/v1/get-horoscope/weekly",
+            "params": [
+              {
+                "name": "sign",
+                "value": "",
+                "type": "query",
+                "description": "Zodiac sign (case-insensitive)."
+              }
+            ]
+          },
+          "docs": "Returns weekly horoscope for the specified zodiac sign."
+        },
+        {
+          "info": {
+            "name": "Get Monthly Horoscope",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://freehoroscopeapi.com/api/v1/get-horoscope/monthly",
+            "params": [
+              {
+                "name": "sign",
+                "value": "",
+                "type": "query",
+                "description": "Zodiac sign (case-insensitive)."
+              }
+            ]
+          },
+          "docs": "Returns monthly horoscope for the specified zodiac sign."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}
