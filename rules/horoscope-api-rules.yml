@@ -1,5 +1,5 @@
-aid: horoscope-api
-name: Horoscope API Rules
+x-aid: horoscope-api
+x-name: Horoscope API Rules
 description: >-
   Operational and design rules for the Horoscope API, providing daily, weekly,
   and monthly zodiac horoscopes in JSON.

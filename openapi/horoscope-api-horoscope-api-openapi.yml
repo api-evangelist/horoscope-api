@@ -1,4 +1,4 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
   title: Horoscope API
   description: The Horoscope API provides daily, weekly, and monthly horoscope predictions for each zodiac sign, delivering personalized astrological insights in JSON format.
