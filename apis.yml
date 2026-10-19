@@ -41,16 +41,61 @@ created: '2025-01-07'
 modified: '2026-05-19'
 specificationVersion: '0.23'
 apis:
-- aid: horoscope-api:horoscope-api-horoscope-api
-  name: Horoscope API Horoscope API
-  description: Horoscope predictions by zodiac sign
+- aid: horoscope-api:horoscope-api-calendar-api
+  name: Horoscope API Calendar API
+  description: Location-based daily calendar and Sun/Moon data.
   humanURL: https://freehoroscopeapi.com
   baseURL: https://freehoroscopeapi.com/api/v1
   tags:
-  - Horoscope
+  - Calendar
   properties:
   - type: OpenAPI
-    url: openapi/horoscope-api-horoscope-api-openapi.yml
+    url: openapi/horoscope-api-calendar-api-openapi.yml
+  - type: Documentation
+    url: https://freehoroscopeapi.com
+  - type: Rules
+    url: >-
+      https://raw.githubusercontent.com/api-evangelist/horoscope-api/refs/heads/main/rules/horoscope-api-rules.yml
+- aid: horoscope-api:horoscope-api-horoscopes-api
+  name: Horoscope API Horoscopes API
+  description: Written daily, weekly and monthly readings.
+  humanURL: https://freehoroscopeapi.com
+  baseURL: https://freehoroscopeapi.com/api/v1
+  tags:
+  - Horoscopes
+  properties:
+  - type: OpenAPI
+    url: openapi/horoscope-api-horoscopes-api-openapi.yml
+  - type: Documentation
+    url: https://freehoroscopeapi.com
+  - type: Rules
+    url: >-
+      https://raw.githubusercontent.com/api-evangelist/horoscope-api/refs/heads/main/rules/horoscope-api-rules.yml
+- aid: horoscope-api:horoscope-api-planetary-data-api
+  name: Horoscope API Planetary data API
+  description: Calculated positions and classifications.
+  humanURL: https://freehoroscopeapi.com
+  baseURL: https://freehoroscopeapi.com/api/v1
+  tags:
+  - Planetary data
+  properties:
+  - type: OpenAPI
+    url: openapi/horoscope-api-planetary-data-api-openapi.yml
+  - type: Documentation
+    url: https://freehoroscopeapi.com
+  - type: Rules
+    url: >-
+      https://raw.githubusercontent.com/api-evangelist/horoscope-api/refs/heads/main/rules/horoscope-api-rules.yml
+- aid: horoscope-api:horoscope-api-tarot-api
+  name: Horoscope API Tarot API
+  description: The 78-card deck and random draws.
+  humanURL: https://freehoroscopeapi.com
+  baseURL: https://freehoroscopeapi.com/api/v1
+  tags:
+  - Tarot
+  properties:
+  - type: OpenAPI
+    url: openapi/horoscope-api-tarot-api-openapi.yml
   - type: Documentation
     url: https://freehoroscopeapi.com
   - type: Rules

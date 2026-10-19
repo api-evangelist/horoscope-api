@@ -1,0 +1,3687 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "FreeHoroscopeAPI",
+    "version": "1.1.0",
+    "description": "Free public JSON APIs for horoscope readings, tarot cards, planetary positions, Panchang and Sun/Moon times. No API key or account is required. Public data routes support GET and OPTIONS with cross-origin access without credentials. Horoscope responses use a data wrapper; tarot responses use nhits and cards; calculation responses have no wrapper. This document covers the public data API, not account management. All references are included in this file. Commercial and non-commercial API use is allowed with attribution. Include a visible Powered by FreeHoroscopeAPI link to https://freehoroscopeapi.com in your application, website, or public documentation. Upstream requests have a total deadline of 10 seconds for horoscopes and 30 seconds for calculations, including the response body. Successful upstream data must match the response schema. Gateway errors include a stable code and a readable error message.",
+    "contact": {
+      "name": "FreeHoroscopeAPI",
+      "url": "https://freehoroscopeapi.com",
+      "email": "admin@freehoroscopeapi.com"
+    },
+    "termsOfService": "https://freehoroscopeapi.com/#usage-terms"
+  },
+  "servers": [
+    {
+      "url": "https://freehoroscopeapi.com",
+      "description": "Production API"
+    }
+  ],
+  "security": [],
+  "tags": [
+    {
+      "name": "Horoscopes",
+      "description": "Written daily, weekly and monthly readings."
+    },
+    {
+      "name": "Tarot",
+      "description": "The 78-card deck and random draws."
+    },
+    {
+      "name": "Planetary data",
+      "description": "Calculated positions and classifications."
+    },
+    {
+      "name": "Calendar",
+      "description": "Location-based daily calendar and Sun/Moon data."
+    }
+  ],
+  "externalDocs": {
+    "description": "Interactive API explorer",
+    "url": "https://freehoroscopeapi.com/explorer"
+  },
+  "paths": {
+    "/api/v1/get-horoscope/daily": {
+      "get": {
+        "operationId": "getDailyHoroscope",
+        "summary": "Get a daily horoscope",
+        "description": "Returns the current daily reading for one zodiac sign inside a data object. The only supported query parameter is sign; there is no date or day selector. Upstream responses are checked for required fields, a non-empty reading, a valid calendar date (or YYYY-MM for monthly readings), and a sign and period that match the request. The date is the provider's reading label; this validation does not guarantee freshness. The total upstream deadline is 10 seconds. No include or timezone parameter is supported. The response contains no timezone field.",
+        "tags": [
+          "Horoscopes"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Sign"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current daily reading.",
+            "headers": {
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/AllowOrigin"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HoroscopeResponse"
+                },
+                "examples": {
+                  "DailyHoroscope": {
+                    "$ref": "#/components/examples/DailyHoroscope"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "405": {
+            "$ref": "#/components/responses/MethodNotAllowed"
+          },
+          "502": {
+            "$ref": "#/components/responses/BadGateway"
+          },
+          "504": {
+            "$ref": "#/components/responses/GatewayTimeout"
+          }
+        }
+      },
+      "options": {
+        "operationId": "getDailyHoroscopePreflight",
+        "summary": "Check browser access",
+        "tags": [
+          "Horoscopes"
+        ],
+        "responses": {
+          "204": {
+            "$ref": "#/components/responses/Preflight"
+          }
+        }
+      }
+    },
+    "/api/v1/get-horoscope/weekly": {
+      "get": {
+        "operationId": "getWeeklyHoroscope",
+        "summary": "Get a weekly horoscope",
+        "description": "Returns the current weekly reading for one zodiac sign inside a data object. The only supported query parameter is sign; there is no date or day selector. Upstream responses are checked for required fields, a non-empty reading, a valid calendar date (or YYYY-MM for monthly readings), and a sign and period that match the request. The date is the provider's reading label; this validation does not guarantee freshness. The total upstream deadline is 10 seconds. No include or timezone parameter is supported. The response contains no timezone field.",
+        "tags": [
+          "Horoscopes"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Sign"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current weekly reading.",
+            "headers": {
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/AllowOrigin"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HoroscopeResponse"
+                },
+                "examples": {
+                  "WeeklyHoroscope": {
+                    "$ref": "#/components/examples/WeeklyHoroscope"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "405": {
+            "$ref": "#/components/responses/MethodNotAllowed"
+          },
+          "502": {
+            "$ref": "#/components/responses/BadGateway"
+          },
+          "504": {
+            "$ref": "#/components/responses/GatewayTimeout"
+          }
+        }
+      },
+      "options": {
+        "operationId": "getWeeklyHoroscopePreflight",
+        "summary": "Check browser access",
+        "tags": [
+          "Horoscopes"
+        ],
+        "responses": {
+          "204": {
+            "$ref": "#/components/responses/Preflight"
+          }
+        }
+      }
+    },
+    "/api/v1/get-horoscope/monthly": {
+      "get": {
+        "operationId": "getMonthlyHoroscope",
+        "summary": "Get a monthly horoscope",
+        "description": "Returns the current monthly reading for one zodiac sign inside a data object. The only supported query parameter is sign; there is no date or day selector. Upstream responses are checked for required fields, a non-empty reading, a valid calendar date (or YYYY-MM for monthly readings), and a sign and period that match the request. The date is the provider's reading label; this validation does not guarantee freshness. The total upstream deadline is 10 seconds. No include or timezone parameter is supported. The response contains no timezone field.",
+        "tags": [
+          "Horoscopes"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Sign"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current monthly reading.",
+            "headers": {
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/AllowOrigin"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HoroscopeResponse"
+                },
+                "examples": {
+                  "MonthlyHoroscope": {
+                    "$ref": "#/components/examples/MonthlyHoroscope"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "405": {
+            "$ref": "#/components/responses/MethodNotAllowed"
+          },
+          "502": {
+            "$ref": "#/components/responses/BadGateway"
+          },
+          "504": {
+            "$ref": "#/components/responses/GatewayTimeout"
+          }
+        }
+      },
+      "options": {
+        "operationId": "getMonthlyHoroscopePreflight",
+        "summary": "Check browser access",
+        "tags": [
+          "Horoscopes"
+        ],
+        "responses": {
+          "204": {
+            "$ref": "#/components/responses/Preflight"
+          }
+        }
+      }
+    },
+    "/api/v1/tarot/cards": {
+      "get": {
+        "operationId": "getTarotCards",
+        "summary": "List all tarot cards",
+        "description": "Returns all 78 cards. The response has nhits and cards at the top level, without a data wrapper. There is no include or timezone parameter. No query parameters are supported; card filtering is selected by the endpoint path.",
+        "tags": [
+          "Tarot"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Returns all 78 cards.",
+            "headers": {
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/AllowOrigin"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TarotResponse"
+                }
+              }
+            }
+          },
+          "405": {
+            "$ref": "#/components/responses/MethodNotAllowed"
+          }
+        }
+      },
+      "options": {
+        "operationId": "getTarotCardsPreflight",
+        "summary": "Check browser access",
+        "tags": [
+          "Tarot"
+        ],
+        "responses": {
+          "204": {
+            "$ref": "#/components/responses/Preflight"
+          }
+        }
+      }
+    },
+    "/api/v1/tarot/cards/major": {
+      "get": {
+        "operationId": "getMajorArcana",
+        "summary": "List major arcana cards",
+        "description": "Returns the 22 major arcana cards. The response has nhits and cards at the top level, without a data wrapper. There is no include or timezone parameter. No query parameters are supported; card filtering is selected by the endpoint path.",
+        "tags": [
+          "Tarot"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Returns the 22 major arcana cards.",
+            "headers": {
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/AllowOrigin"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TarotResponse"
+                }
+              }
+            }
+          },
+          "405": {
+            "$ref": "#/components/responses/MethodNotAllowed"
+          }
+        }
+      },
+      "options": {
+        "operationId": "getMajorArcanaPreflight",
+        "summary": "Check browser access",
+        "tags": [
+          "Tarot"
+        ],
+        "responses": {
+          "204": {
+            "$ref": "#/components/responses/Preflight"
+          }
+        }
+      }
+    },
+    "/api/v1/tarot/cards/minor": {
+      "get": {
+        "operationId": "getMinorArcana",
+        "summary": "List minor arcana cards",
+        "description": "Returns the 56 minor arcana cards. The response has nhits and cards at the top level, without a data wrapper. There is no include or timezone parameter. No query parameters are supported; card filtering is selected by the endpoint path.",
+        "tags": [
+          "Tarot"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Returns the 56 minor arcana cards.",
+            "headers": {
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/AllowOrigin"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TarotResponse"
+                }
+              }
+            }
+          },
+          "405": {
+            "$ref": "#/components/responses/MethodNotAllowed"
+          }
+        }
+      },
+      "options": {
+        "operationId": "getMinorArcanaPreflight",
+        "summary": "Check browser access",
+        "tags": [
+          "Tarot"
+        ],
+        "responses": {
+          "204": {
+            "$ref": "#/components/responses/Preflight"
+          }
+        }
+      }
+    },
+    "/api/v1/tarot/cards/random": {
+      "get": {
+        "operationId": "drawTarotCards",
+        "summary": "Draw random tarot cards",
+        "description": "Draws distinct random cards. The default pool is the 22 major arcana cards; use minor=true for all 78. Requests above the pool size return the complete pool. The response has nhits and cards at the top level, without a data wrapper. There is no include or timezone parameter.",
+        "tags": [
+          "Tarot"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/CardCount"
+          },
+          {
+            "$ref": "#/components/parameters/IncludeMinor"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Draws distinct random cards. The default pool is the 22 major arcana cards; use minor=true for all 78. Requests above the pool size return the complete pool.",
+            "headers": {
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/AllowOrigin"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TarotResponse"
+                },
+                "examples": {
+                  "TarotDraw": {
+                    "$ref": "#/components/examples/TarotDraw"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "n must be a positive integer.",
+            "headers": {
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/AllowOrigin"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Parameter n must be a positive integer"
+                }
+              }
+            }
+          },
+          "405": {
+            "$ref": "#/components/responses/MethodNotAllowed"
+          }
+        }
+      },
+      "options": {
+        "operationId": "drawTarotCardsPreflight",
+        "summary": "Check browser access",
+        "tags": [
+          "Tarot"
+        ],
+        "responses": {
+          "204": {
+            "$ref": "#/components/responses/Preflight"
+          }
+        }
+      }
+    },
+    "/api/v1/planetary-positions": {
+      "get": {
+        "operationId": "getPlanetaryPositions",
+        "summary": "Get planetary positions",
+        "description": "Returns calculated planetary positions, not written horoscope readings. No data wrapper. All 12 bodies are included. Coordinates are optional but must be supplied as a pair. Sidereal output uses an approximate Lahiri model, with mean Rahu and Ketu. No houses or Ascendant are returned. The complete upstream body is checked against the response schema before it is returned. The total upstream deadline is 30 seconds. The timezone is derived from the coordinates and returned in the response; a timezone query parameter cannot override it.",
+        "tags": [
+          "Planetary data"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Datetime"
+          },
+          {
+            "$ref": "#/components/parameters/Zodiac"
+          },
+          {
+            "$ref": "#/components/parameters/Latitude"
+          },
+          {
+            "$ref": "#/components/parameters/Longitude"
+          },
+          {
+            "$ref": "#/components/parameters/LongitudeAlias"
+          },
+          {
+            "$ref": "#/components/parameters/LongAlias"
+          },
+          {
+            "$ref": "#/components/parameters/Observer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Geocentric positions and optional observer data.",
+            "headers": {
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/AllowOrigin"
+              },
+              "Server-Timing": {
+                "$ref": "#/components/headers/ServerTiming"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/ExposeHeaders"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlanetaryPositions"
+                },
+                "examples": {
+                  "SiderealPositions": {
+                    "$ref": "#/components/examples/SiderealPositions"
+                  },
+                  "TropicalPositions": {
+                    "$ref": "#/components/examples/TropicalPositions"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid coordinate, date, datetime, include option or calculation range.",
+            "headers": {
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/AllowOrigin"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/NoStore"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CalculationError"
+                },
+                "example": {
+                  "error": "lat must be between -90 and 90"
+                }
+              }
+            }
+          },
+          "405": {
+            "$ref": "#/components/responses/CalculationMethodNotAllowed"
+          },
+          "422": {
+            "$ref": "#/components/responses/CalculationValidationFailed"
+          },
+          "502": {
+            "$ref": "#/components/responses/CalculationBadGateway"
+          },
+          "503": {
+            "$ref": "#/components/responses/CalculationServiceUnavailable"
+          },
+          "504": {
+            "$ref": "#/components/responses/CalculationGatewayTimeout"
+          },
+          "default": {
+            "description": "A structured JSON error from the calculation service is passed through with its HTTP status and body. It contains an error string or a validation detail array. Errors are not cached. Malformed or non-JSON errors are replaced with HTTP 502.",
+            "headers": {
+              "Cache-Control": {
+                "$ref": "#/components/headers/NoStore"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/AllowOrigin"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CalculationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "options": {
+        "operationId": "getPlanetaryPositionsPreflight",
+        "summary": "Check browser access",
+        "tags": [
+          "Planetary data"
+        ],
+        "responses": {
+          "204": {
+            "$ref": "#/components/responses/Preflight"
+          }
+        }
+      }
+    },
+    "/api/v1/astrology": {
+      "get": {
+        "operationId": "getAstrology",
+        "summary": "Get planetary positions (compatibility alias)",
+        "description": "Compatibility alias of /api/v1/planetary-positions with identical parameters and response. Returns calculated planetary positions, not written horoscope readings. No data wrapper. All 12 bodies are included. Coordinates are optional but must be supplied as a pair. Sidereal output uses an approximate Lahiri model, with mean Rahu and Ketu. No houses or Ascendant are returned. The complete upstream body is checked against the response schema before it is returned. The total upstream deadline is 30 seconds. The timezone is derived from the coordinates and returned in the response; a timezone query parameter cannot override it.",
+        "tags": [
+          "Planetary data"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Datetime"
+          },
+          {
+            "$ref": "#/components/parameters/Zodiac"
+          },
+          {
+            "$ref": "#/components/parameters/Latitude"
+          },
+          {
+            "$ref": "#/components/parameters/Longitude"
+          },
+          {
+            "$ref": "#/components/parameters/LongitudeAlias"
+          },
+          {
+            "$ref": "#/components/parameters/LongAlias"
+          },
+          {
+            "$ref": "#/components/parameters/Observer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Geocentric positions and optional observer data.",
+            "headers": {
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/AllowOrigin"
+              },
+              "Server-Timing": {
+                "$ref": "#/components/headers/ServerTiming"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/ExposeHeaders"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlanetaryPositions"
+                },
+                "examples": {
+                  "SiderealPositions": {
+                    "$ref": "#/components/examples/SiderealPositions"
+                  },
+                  "TropicalPositions": {
+                    "$ref": "#/components/examples/TropicalPositions"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid coordinate, date, datetime, include option or calculation range.",
+            "headers": {
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/AllowOrigin"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/NoStore"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CalculationError"
+                },
+                "example": {
+                  "error": "lat must be between -90 and 90"
+                }
+              }
+            }
+          },
+          "405": {
+            "$ref": "#/components/responses/CalculationMethodNotAllowed"
+          },
+          "422": {
+            "$ref": "#/components/responses/CalculationValidationFailed"
+          },
+          "502": {
+            "$ref": "#/components/responses/CalculationBadGateway"
+          },
+          "503": {
+            "$ref": "#/components/responses/CalculationServiceUnavailable"
+          },
+          "504": {
+            "$ref": "#/components/responses/CalculationGatewayTimeout"
+          },
+          "default": {
+            "description": "A structured JSON error from the calculation service is passed through with its HTTP status and body. It contains an error string or a validation detail array. Errors are not cached. Malformed or non-JSON errors are replaced with HTTP 502.",
+            "headers": {
+              "Cache-Control": {
+                "$ref": "#/components/headers/NoStore"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/AllowOrigin"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CalculationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "options": {
+        "operationId": "getAstrologyPreflight",
+        "summary": "Check browser access",
+        "tags": [
+          "Planetary data"
+        ],
+        "responses": {
+          "204": {
+            "$ref": "#/components/responses/Preflight"
+          }
+        }
+      }
+    },
+    "/api/v1/panchang": {
+      "get": {
+        "operationId": "getPanchang",
+        "summary": "Get daily Panchang",
+        "description": "Requires lat and one of lng, lon or long. The date defaults to local today. The window runs from sunrise to the next sunrise, with a labeled civil-day fallback if sunrise is unavailable. The entire calculation window must fall within 1900-01-01T00:00:00Z inclusive to 2053-01-01T00:00:00Z exclusive. Returns astronomical limbs using an approximate Lahiri model; festival and regional observance rules are not included. No data wrapper. The complete upstream body is checked against the response schema before it is returned. The total upstream deadline is 30 seconds. The timezone is derived from the coordinates and returned in the response; a timezone query parameter cannot override it. This endpoint has no include or timeformat parameter. Window and transition timestamps always use ISO-8601 with local UTC offsets.",
+        "tags": [
+          "Calendar"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RequiredLatitude"
+          },
+          {
+            "$ref": "#/components/parameters/Longitude"
+          },
+          {
+            "$ref": "#/components/parameters/LongitudeAlias"
+          },
+          {
+            "$ref": "#/components/parameters/LongAlias"
+          },
+          {
+            "$ref": "#/components/parameters/Date"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Local day, calculation window and Panchang transitions.",
+            "headers": {
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/AllowOrigin"
+              },
+              "Server-Timing": {
+                "$ref": "#/components/headers/ServerTiming"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/ExposeHeaders"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Panchang"
+                },
+                "examples": {
+                  "MumbaiPanchang": {
+                    "$ref": "#/components/examples/MumbaiPanchang"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid coordinate, date, datetime, include option or calculation range.",
+            "headers": {
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/AllowOrigin"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/NoStore"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CalculationError"
+                },
+                "example": {
+                  "error": "lat must be between -90 and 90"
+                }
+              }
+            }
+          },
+          "405": {
+            "$ref": "#/components/responses/CalculationMethodNotAllowed"
+          },
+          "502": {
+            "$ref": "#/components/responses/CalculationBadGateway"
+          },
+          "503": {
+            "$ref": "#/components/responses/CalculationServiceUnavailable"
+          },
+          "504": {
+            "$ref": "#/components/responses/CalculationGatewayTimeout"
+          },
+          "default": {
+            "description": "A structured JSON error from the calculation service is passed through with its HTTP status and body. It contains an error string or a validation detail array. Errors are not cached. Malformed or non-JSON errors are replaced with HTTP 502.",
+            "headers": {
+              "Cache-Control": {
+                "$ref": "#/components/headers/NoStore"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/AllowOrigin"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CalculationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "options": {
+        "operationId": "getPanchangPreflight",
+        "summary": "Check browser access",
+        "tags": [
+          "Calendar"
+        ],
+        "responses": {
+          "204": {
+            "$ref": "#/components/responses/Preflight"
+          }
+        }
+      }
+    },
+    "/api/v1/times": {
+      "get": {
+        "operationId": "getSunMoonTimes",
+        "summary": "Get Sun, Moon and Rahu Kaal times",
+        "description": "Requires lat and one of lng, lon or long. Defaults to local today and 12-hour event strings. Set timeformat=24 for ISO-8601 event timestamps. With no date parameter, available today/tomorrow summaries are also included. Events can be null at polar locations, and Rahu Kaal can be absent. include=moon_details adds a separate local-noon calculation. No data wrapper. The complete upstream body is checked against the response schema before it is returned. The total upstream deadline is 30 seconds. The timezone is derived from the coordinates and returned in the response; a timezone query parameter cannot override it.",
+        "tags": [
+          "Calendar"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RequiredLatitude"
+          },
+          {
+            "$ref": "#/components/parameters/Longitude"
+          },
+          {
+            "$ref": "#/components/parameters/LongitudeAlias"
+          },
+          {
+            "$ref": "#/components/parameters/LongAlias"
+          },
+          {
+            "$ref": "#/components/parameters/Date"
+          },
+          {
+            "$ref": "#/components/parameters/TimeFormat"
+          },
+          {
+            "$ref": "#/components/parameters/MoonDetails"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Local Sun and Moon events, with optional periods and summaries.",
+            "headers": {
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/AllowOrigin"
+              },
+              "Server-Timing": {
+                "$ref": "#/components/headers/ServerTiming"
+              },
+              "Access-Control-Expose-Headers": {
+                "$ref": "#/components/headers/ExposeHeaders"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Times"
+                },
+                "examples": {
+                  "MumbaiTimes": {
+                    "$ref": "#/components/examples/MumbaiTimes"
+                  },
+                  "PolarTimes": {
+                    "$ref": "#/components/examples/PolarTimes"
+                  },
+                  "CurrentTimes": {
+                    "$ref": "#/components/examples/CurrentTimes"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid coordinate, date, datetime, include option or calculation range.",
+            "headers": {
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/AllowOrigin"
+              },
+              "Cache-Control": {
+                "$ref": "#/components/headers/NoStore"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CalculationError"
+                },
+                "example": {
+                  "error": "lat must be between -90 and 90"
+                }
+              }
+            }
+          },
+          "405": {
+            "$ref": "#/components/responses/CalculationMethodNotAllowed"
+          },
+          "422": {
+            "$ref": "#/components/responses/CalculationValidationFailed"
+          },
+          "502": {
+            "$ref": "#/components/responses/CalculationBadGateway"
+          },
+          "503": {
+            "$ref": "#/components/responses/CalculationServiceUnavailable"
+          },
+          "504": {
+            "$ref": "#/components/responses/CalculationGatewayTimeout"
+          },
+          "default": {
+            "description": "A structured JSON error from the calculation service is passed through with its HTTP status and body. It contains an error string or a validation detail array. Errors are not cached. Malformed or non-JSON errors are replaced with HTTP 502.",
+            "headers": {
+              "Cache-Control": {
+                "$ref": "#/components/headers/NoStore"
+              },
+              "Access-Control-Allow-Origin": {
+                "$ref": "#/components/headers/AllowOrigin"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CalculationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "options": {
+        "operationId": "getSunMoonTimesPreflight",
+        "summary": "Check browser access",
+        "tags": [
+          "Calendar"
+        ],
+        "responses": {
+          "204": {
+            "$ref": "#/components/responses/Preflight"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "parameters": {
+      "Sign": {
+        "name": "sign",
+        "in": "query",
+        "description": "Zodiac sign for the reading. Allowed values are listed below. Values are case-insensitive; for example, aries and Aries select the same sign. There is no default.",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "aries",
+            "taurus",
+            "gemini",
+            "cancer",
+            "leo",
+            "virgo",
+            "libra",
+            "scorpio",
+            "sagittarius",
+            "capricorn",
+            "aquarius",
+            "pisces"
+          ]
+        },
+        "example": "aries"
+      },
+      "Datetime": {
+        "name": "datetime",
+        "in": "query",
+        "description": "Defaults to the current instant. Supply ISO-8601 with seconds and Z or an explicit UTC offset. Supported UTC instants: 1900-01-01 inclusive to 2053-01-01 exclusive. Fractional seconds may have up to six digits. Date-only values, missing offsets, leap seconds and -00:00 are rejected. URL-encode a positive offset sign as %2B. Coordinates do not infer the input timezone.",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "example": "2000-01-01T12:00:00Z",
+        "x-default-description": "The current instant in UTC when the parameter is omitted."
+      },
+      "Zodiac": {
+        "name": "zodiac",
+        "in": "query",
+        "description": "Sidereal uses an approximate Lahiri model. Tropical results omit nakshatra and pada and return a null ayanamsa.",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "sidereal",
+            "tropical"
+          ],
+          "default": "sidereal",
+          "x-enumDescriptions": {
+            "sidereal": "Approximate Lahiri zodiac; includes nakshatra and pada.",
+            "tropical": "Tropical zodiac; omits nakshatra and pada and sets ayanamsa to null."
+          }
+        },
+        "example": "sidereal"
+      },
+      "Latitude": {
+        "name": "lat",
+        "in": "query",
+        "description": "Latitude in degrees. For planetary positions, omit both coordinates or supply latitude and one longitude. Required when include=observer.",
+        "required": false,
+        "schema": {
+          "type": "number",
+          "minimum": -90,
+          "maximum": 90
+        },
+        "example": 19.076,
+        "x-default-description": "Omit both coordinates for geocentric positions without location metadata."
+      },
+      "RequiredLatitude": {
+        "name": "lat",
+        "in": "query",
+        "description": "Latitude in degrees. Also supply lng, lon or long.",
+        "required": true,
+        "schema": {
+          "type": "number",
+          "minimum": -90,
+          "maximum": 90
+        },
+        "example": 19.076
+      },
+      "Longitude": {
+        "name": "lng",
+        "in": "query",
+        "description": "Longitude in degrees. Required with lat unless lon or long is supplied. The API checks lng first, then lon, then long. OpenAPI cannot express this dependency between query parameters.",
+        "required": false,
+        "schema": {
+          "type": "number",
+          "minimum": -180,
+          "maximum": 180
+        },
+        "example": 72.878,
+        "x-default-description": "Use lon, then long, if lng is absent. A longitude is required whenever lat is supplied."
+      },
+      "LongitudeAlias": {
+        "name": "lon",
+        "in": "query",
+        "description": "Alternative to lng. Used only when lng is absent. Supply lat as well.",
+        "required": false,
+        "schema": {
+          "type": "number",
+          "minimum": -180,
+          "maximum": 180
+        },
+        "example": 72.878,
+        "x-default-description": "No default. This is an alternative longitude parameter, not an additional coordinate."
+      },
+      "LongAlias": {
+        "name": "long",
+        "in": "query",
+        "description": "Alternative to lng and lon. Used only when both are absent. Supply lat as well.",
+        "required": false,
+        "schema": {
+          "type": "number",
+          "minimum": -180,
+          "maximum": 180
+        },
+        "example": 72.878,
+        "x-default-description": "No default. This is an alternative longitude parameter, not an additional coordinate."
+      },
+      "Observer": {
+        "name": "include",
+        "in": "query",
+        "description": "Add observer positions for the ten physical bodies: Sun, Moon, Mercury, Venus, Mars, Jupiter, Saturn, Uranus, Neptune and Pluto. Includes altitude_deg, azimuth_deg, distance_km and above_horizon. Rahu and Ketu are not physical bodies. Requires lat and one of lng, lon or long. The geocentric bodies object is unchanged. This endpoint accepts only observer. Omit include or send an empty value for the standard response. The parameter is a comma-separated list; whitespace and duplicate entries are ignored. Unknown values return HTTP 400.",
+        "required": false,
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "observer"
+            ]
+          },
+          "default": []
+        },
+        "style": "form",
+        "explode": false,
+        "allowEmptyValue": true,
+        "example": [
+          "observer"
+        ],
+        "x-default-description": "No extra fields. Omit include or leave its value empty."
+      },
+      "Date": {
+        "name": "date",
+        "in": "query",
+        "description": "Local calendar date in YYYY-MM-DD format. Omit the parameter or leave it empty to use today in the timezone derived from the coordinates. Panchang uses the date to select sunrise through the next sunrise. For Sun and Moon times, an explicit date omits the live today and tomorrow summaries.",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "format": "date"
+        },
+        "example": "2026-10-01",
+        "x-default-description": "Today in the timezone derived from the coordinates.",
+        "allowEmptyValue": true
+      },
+      "TimeFormat": {
+        "name": "timeformat",
+        "in": "query",
+        "description": "Event time display. Use 12 for YYYY-MM-DDThh:mm:ss AM/PM ±HHMM (for example, 2026-10-01T06:30:00 AM +0530). Use 24 for ISO-8601 with the local UTC offset (for example, 2026-10-01T06:30:00+05:30). The short sunrise and sunset values in today/tomorrow use h:mm AM/PM or HH:mm. moon.details.evaluated_at always uses ISO-8601. Only the exact strings 12 and 24 are accepted.",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "12",
+            "24"
+          ],
+          "default": "12",
+          "x-enumDescriptions": {
+            "12": "12-hour event times with AM/PM and UTC offset. API default.",
+            "24": "ISO-8601 event timestamps with UTC offset. Playground preset."
+          }
+        },
+        "example": "24"
+      },
+      "MoonDetails": {
+        "name": "include",
+        "in": "query",
+        "description": "Add moon.details with illumination_pct, phase_angle_deg, evaluated_at and status. The calculation uses local noon on the selected date, not the current time. evaluated_at is always ISO-8601, independent of timeformat. Outside the supported UTC interval from 1900-01-01 inclusive to 2053-01-01 exclusive, illumination_pct and phase_angle_deg are null and status is outside_supported_range. This endpoint accepts only moon_details. Omit include or send an empty value for the standard response. The parameter is a comma-separated list; whitespace and duplicate entries are ignored. Unknown values return HTTP 400.",
+        "required": false,
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "moon_details"
+            ]
+          },
+          "default": []
+        },
+        "style": "form",
+        "explode": false,
+        "allowEmptyValue": true,
+        "example": [
+          "moon_details"
+        ],
+        "x-default-description": "No extra fields. Omit include or leave its value empty."
+      },
+      "CardCount": {
+        "name": "n",
+        "in": "query",
+        "description": "Requested number of distinct cards, as a positive base-10 integer. Default: 1. The response count is capped at the pool size: 22 when minor is false, or 78 when minor is true. For example, n=100 returns the complete selected pool. Zero, negative values and non-numeric values return HTTP 400. There is no pagination.",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1
+        },
+        "example": 3
+      },
+      "IncludeMinor": {
+        "name": "minor",
+        "in": "query",
+        "description": "Choose the random draw pool. The exact lowercase value true includes all 78 cards. false or an omitted parameter uses the 22 major arcana cards. The current API also treats other strings, including True and 1, as false; use true or false for portable requests.",
+        "required": false,
+        "schema": {
+          "type": "boolean",
+          "default": false,
+          "x-enumDescriptions": {
+            "false": "Draw from the 22 major arcana cards.",
+            "true": "Draw from the full deck of 78 cards."
+          }
+        },
+        "example": false
+      }
+    },
+    "headers": {
+      "AllowOrigin": {
+        "description": "Public data can be read by any origin without credentials.",
+        "schema": {
+          "type": "string",
+          "enum": [
+            "*"
+          ]
+        }
+      },
+      "AllowMethods": {
+        "description": "Supported public data methods.",
+        "schema": {
+          "type": "string",
+          "enum": [
+            "GET, OPTIONS"
+          ]
+        }
+      },
+      "AllowHeaders": {
+        "description": "Allowed preflight request headers.",
+        "schema": {
+          "type": "string",
+          "enum": [
+            "Accept, Content-Type"
+          ]
+        }
+      },
+      "Allow": {
+        "description": "Supported methods.",
+        "schema": {
+          "type": "string",
+          "enum": [
+            "GET, OPTIONS"
+          ]
+        }
+      },
+      "ServerTiming": {
+        "description": "Timing information from the calculation service, when available.",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "ExposeHeaders": {
+        "description": "Response headers exposed to browser scripts.",
+        "schema": {
+          "type": "string",
+          "enum": [
+            "Server-Timing"
+          ]
+        }
+      },
+      "NoStore": {
+        "description": "Error responses must not be cached.",
+        "schema": {
+          "type": "string",
+          "enum": [
+            "no-store"
+          ]
+        }
+      }
+    },
+    "responses": {
+      "BadRequest": {
+        "description": "Missing or invalid query parameters.",
+        "headers": {
+          "Access-Control-Allow-Origin": {
+            "$ref": "#/components/headers/AllowOrigin"
+          },
+          "Cache-Control": {
+            "$ref": "#/components/headers/NoStore"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "examples": {
+              "MissingSign": {
+                "value": {
+                  "error": "Missing required query parameter: sign. Use a zodiac sign such as aries.",
+                  "code": "missing_sign"
+                }
+              },
+              "InvalidSign": {
+                "value": {
+                  "error": "Invalid sign. Use one of: aries, taurus, gemini, cancer, leo, virgo, libra, scorpio, sagittarius, capricorn, aquarius, pisces.",
+                  "code": "invalid_sign"
+                }
+              },
+              "InvalidCount": {
+                "value": {
+                  "error": "Parameter n must be a positive integer, such as 1 or 3.",
+                  "code": "invalid_count"
+                }
+              },
+              "CalculationParameter": {
+                "value": {
+                  "error": "lat and lng are required"
+                }
+              }
+            }
+          }
+        }
+      },
+      "MethodNotAllowed": {
+        "description": "This endpoint supports GET and OPTIONS only.",
+        "headers": {
+          "Access-Control-Allow-Origin": {
+            "$ref": "#/components/headers/AllowOrigin"
+          },
+          "Allow": {
+            "$ref": "#/components/headers/Allow"
+          },
+          "Cache-Control": {
+            "$ref": "#/components/headers/NoStore"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "error": "Method not allowed. Use GET or OPTIONS.",
+              "code": "method_not_allowed"
+            }
+          }
+        }
+      },
+      "BadGateway": {
+        "description": "The upstream request failed, returned an unexpected HTTP status, or returned invalid data. Responses must use a JSON content type and must not exceed 1 MiB. Successful data must match the documented schema. Horoscope signs and periods must also match the request. No partial data is returned.",
+        "headers": {
+          "Access-Control-Allow-Origin": {
+            "$ref": "#/components/headers/AllowOrigin"
+          },
+          "Cache-Control": {
+            "$ref": "#/components/headers/NoStore"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/GatewayError"
+            },
+            "examples": {
+              "Unavailable": {
+                "value": {
+                  "error": "The upstream service is unavailable. Try again later.",
+                  "code": "upstream_unavailable"
+                }
+              },
+              "InvalidResponse": {
+                "value": {
+                  "error": "The upstream service returned invalid data. Try again later.",
+                  "code": "invalid_upstream_response"
+                }
+              }
+            }
+          }
+        }
+      },
+      "ServiceUnavailable": {
+        "description": "The calculation service is unavailable or not configured.",
+        "headers": {
+          "Access-Control-Allow-Origin": {
+            "$ref": "#/components/headers/AllowOrigin"
+          },
+          "Cache-Control": {
+            "$ref": "#/components/headers/NoStore"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "error": "The calculation service is not configured. Contact support.",
+              "code": "service_not_configured"
+            }
+          }
+        }
+      },
+      "ValidationFailed": {
+        "description": "The calculation service could not parse a parameter, such as a non-numeric coordinate.",
+        "headers": {
+          "Access-Control-Allow-Origin": {
+            "$ref": "#/components/headers/AllowOrigin"
+          },
+          "Cache-Control": {
+            "$ref": "#/components/headers/NoStore"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "example": {
+              "detail": [
+                {
+                  "type": "float_parsing",
+                  "loc": [
+                    "query",
+                    "lat"
+                  ],
+                  "msg": "Input should be a valid number",
+                  "input": "invalid"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "Preflight": {
+        "description": "Browser preflight accepted. No response body. Parameters are not validated and no upstream request is made.",
+        "headers": {
+          "Access-Control-Allow-Origin": {
+            "$ref": "#/components/headers/AllowOrigin"
+          },
+          "Access-Control-Allow-Methods": {
+            "$ref": "#/components/headers/AllowMethods"
+          },
+          "Access-Control-Allow-Headers": {
+            "$ref": "#/components/headers/AllowHeaders"
+          }
+        }
+      },
+      "GatewayTimeout": {
+        "description": "The upstream service exceeded the total request and body deadline: 10 seconds for horoscopes or 30 seconds for calculations. Retry later with a limited number of attempts and increasing delays.",
+        "headers": {
+          "Access-Control-Allow-Origin": {
+            "$ref": "#/components/headers/AllowOrigin"
+          },
+          "Cache-Control": {
+            "$ref": "#/components/headers/NoStore"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/GatewayError"
+            },
+            "example": {
+              "error": "The upstream service took too long to respond. Try again later.",
+              "code": "upstream_timeout"
+            }
+          }
+        }
+      },
+      "CalculationBadGateway": {
+        "description": "The upstream request failed, returned an unexpected HTTP status, or returned invalid data. Responses must use a JSON content type and must not exceed 1 MiB. Successful data must match the documented schema. Horoscope signs and periods must also match the request. No partial data is returned. A valid structured error returned by the calculation service with this status is passed through unchanged.",
+        "headers": {
+          "Access-Control-Allow-Origin": {
+            "$ref": "#/components/headers/AllowOrigin"
+          },
+          "Cache-Control": {
+            "$ref": "#/components/headers/NoStore"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/CalculationError"
+            },
+            "examples": {
+              "Unavailable": {
+                "value": {
+                  "error": "The upstream service is unavailable. Try again later.",
+                  "code": "upstream_unavailable"
+                }
+              },
+              "InvalidResponse": {
+                "value": {
+                  "error": "The upstream service returned invalid data. Try again later.",
+                  "code": "invalid_upstream_response"
+                }
+              }
+            }
+          }
+        }
+      },
+      "CalculationGatewayTimeout": {
+        "description": "The upstream service exceeded the total request and body deadline: 10 seconds for horoscopes or 30 seconds for calculations. Retry later with a limited number of attempts and increasing delays. A valid structured error returned by the calculation service with this status is passed through unchanged.",
+        "headers": {
+          "Access-Control-Allow-Origin": {
+            "$ref": "#/components/headers/AllowOrigin"
+          },
+          "Cache-Control": {
+            "$ref": "#/components/headers/NoStore"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/CalculationError"
+            },
+            "example": {
+              "error": "The upstream service took too long to respond. Try again later.",
+              "code": "upstream_timeout"
+            }
+          }
+        }
+      },
+      "CalculationServiceUnavailable": {
+        "description": "The calculation service is unavailable or not configured. A valid structured error returned by the calculation service with this status is passed through unchanged.",
+        "headers": {
+          "Access-Control-Allow-Origin": {
+            "$ref": "#/components/headers/AllowOrigin"
+          },
+          "Cache-Control": {
+            "$ref": "#/components/headers/NoStore"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/CalculationError"
+            },
+            "example": {
+              "error": "The calculation service is not configured. Contact support.",
+              "code": "service_not_configured"
+            }
+          }
+        }
+      },
+      "CalculationValidationFailed": {
+        "description": "The calculation service could not parse a parameter, such as a non-numeric coordinate. A valid structured error returned by the calculation service with this status is passed through unchanged.",
+        "headers": {
+          "Access-Control-Allow-Origin": {
+            "$ref": "#/components/headers/AllowOrigin"
+          },
+          "Cache-Control": {
+            "$ref": "#/components/headers/NoStore"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/CalculationError"
+            },
+            "example": {
+              "detail": [
+                {
+                  "type": "float_parsing",
+                  "loc": [
+                    "query",
+                    "lat"
+                  ],
+                  "msg": "Input should be a valid number",
+                  "input": "invalid"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "CalculationMethodNotAllowed": {
+        "description": "This endpoint supports GET and OPTIONS only. A valid structured error returned by the calculation service with this status is passed through unchanged.",
+        "headers": {
+          "Access-Control-Allow-Origin": {
+            "$ref": "#/components/headers/AllowOrigin"
+          },
+          "Allow": {
+            "$ref": "#/components/headers/Allow"
+          },
+          "Cache-Control": {
+            "$ref": "#/components/headers/NoStore"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/CalculationError"
+            },
+            "example": {
+              "error": "Method not allowed. Use GET or OPTIONS.",
+              "code": "method_not_allowed"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "Error message.",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "code": {
+            "type": "string",
+            "description": "Stable code for errors generated by this API: missing_sign, invalid_sign, invalid_count, method_not_allowed, upstream_unavailable, invalid_upstream_response, upstream_timeout or service_not_configured. Errors passed through from the calculation service can omit code or use a service-specific code such as invalid_parameter."
+          }
+        },
+        "required": [
+          "error"
+        ]
+      },
+      "ValidationError": {
+        "type": "object",
+        "properties": {
+          "detail": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "loc": {
+                  "type": "array",
+                  "items": {
+                    "oneOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "integer"
+                      }
+                    ]
+                  }
+                },
+                "msg": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "input": {
+                  "description": "The invalid value, when supplied by the upstream validator."
+                },
+                "ctx": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              },
+              "required": [
+                "loc",
+                "msg",
+                "type"
+              ]
+            }
+          }
+        },
+        "required": [
+          "detail"
+        ],
+        "description": "Upstream parameter type errors can use this format with HTTP 422."
+      },
+      "HoroscopeResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "description": "The horoscope reading for the requested sign and period.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Horoscope"
+              }
+            ]
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "description": "A data object wraps the horoscope reading."
+      },
+      "Horoscope": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "description": "Reading date or period label. Daily and weekly readings use YYYY-MM-DD; monthly readings use YYYY-MM. Do not assume every value is a full date.",
+            "example": "2026-10"
+          },
+          "period": {
+            "type": "string",
+            "enum": [
+              "daily",
+              "weekly",
+              "monthly"
+            ],
+            "description": "The requested reading period: daily, weekly or monthly."
+          },
+          "sign": {
+            "type": "string",
+            "description": "The requested zodiac sign. Case-insensitive when checked against the request.",
+            "example": "Aries",
+            "minLength": 1
+          },
+          "horoscope": {
+            "type": "string",
+            "description": "Written reading returned by the horoscope provider.",
+            "minLength": 1,
+            "pattern": "\\S"
+          }
+        },
+        "required": [
+          "date",
+          "period",
+          "sign",
+          "horoscope"
+        ],
+        "oneOf": [
+          {
+            "properties": {
+              "period": {
+                "type": "string",
+                "enum": [
+                  "monthly"
+                ]
+              },
+              "date": {
+                "type": "string",
+                "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$"
+              }
+            }
+          },
+          {
+            "properties": {
+              "period": {
+                "type": "string",
+                "enum": [
+                  "daily",
+                  "weekly"
+                ]
+              },
+              "date": {
+                "type": "string",
+                "format": "date",
+                "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+              }
+            }
+          }
+        ]
+      },
+      "TarotCard": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "major",
+              "minor"
+            ],
+            "description": "Arcana group: major or minor."
+          },
+          "name": {
+            "type": "string",
+            "description": "Full card name.",
+            "example": "The Fool"
+          },
+          "name_short": {
+            "type": "string",
+            "description": "Short card identifier, for example ar00.",
+            "example": "ar00"
+          },
+          "value": {
+            "type": "string",
+            "description": "Card rank as a string."
+          },
+          "value_int": {
+            "type": "integer",
+            "description": "Card rank as an integer."
+          },
+          "meaning_up": {
+            "type": "string",
+            "description": "Upright meaning."
+          },
+          "meaning_rev": {
+            "type": "string",
+            "description": "Reversed meaning."
+          },
+          "desc": {
+            "type": "string",
+            "description": "Description of the card and its imagery."
+          },
+          "suit": {
+            "type": "string",
+            "enum": [
+              "wands",
+              "cups",
+              "swords",
+              "pentacles"
+            ],
+            "description": "Present for minor arcana cards."
+          }
+        },
+        "required": [
+          "type",
+          "name",
+          "name_short",
+          "value",
+          "value_int",
+          "meaning_up",
+          "meaning_rev",
+          "desc"
+        ]
+      },
+      "TarotResponse": {
+        "type": "object",
+        "properties": {
+          "nhits": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 78,
+            "description": "Number of cards returned. This equals the length of cards."
+          },
+          "cards": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TarotCard"
+            },
+            "minItems": 1,
+            "maxItems": 78,
+            "description": "Returned tarot cards. List endpoints return the selected complete deck. The random endpoint returns distinct cards from its selected pool."
+          }
+        },
+        "required": [
+          "nhits",
+          "cards"
+        ],
+        "description": "nhits and cards are top-level fields. There is no data wrapper."
+      },
+      "Location": {
+        "type": "object",
+        "properties": {
+          "lat": {
+            "type": "number",
+            "minimum": -90,
+            "maximum": 90,
+            "description": "Latitude in degrees north of the equator; negative values are south."
+          },
+          "lon": {
+            "type": "number",
+            "minimum": -180,
+            "maximum": 180,
+            "description": "Longitude in degrees east of Greenwich; negative values are west. The response always uses lon, regardless of the request alias."
+          }
+        },
+        "required": [
+          "lat",
+          "lon"
+        ],
+        "description": "Responses use lon even when the request uses lng or long."
+      },
+      "Ayanamsa": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the sidereal offset model."
+          },
+          "model": {
+            "type": "string",
+            "description": "Calculation convention used to approximate the offset."
+          },
+          "degrees": {
+            "type": "number",
+            "description": "Offset applied to tropical longitude, in degrees."
+          }
+        },
+        "required": [
+          "name",
+          "model",
+          "degrees"
+        ],
+        "nullable": true,
+        "description": "Applied sidereal offset. Null for tropical positions."
+      },
+      "PlanetaryBody": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "luminary",
+              "planet",
+              "dwarf_planet",
+              "lunar_node"
+            ],
+            "description": "Body classification."
+          },
+          "longitude": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 360,
+            "description": "Degrees in the selected zodiac, from 0 inclusive to 360 exclusive."
+          },
+          "latitude": {
+            "type": "number",
+            "description": "Ecliptic latitude in degrees; zero for lunar nodes."
+          },
+          "longitude_speed": {
+            "type": "number",
+            "description": "Degrees per TT day in the selected zodiac."
+          },
+          "retrograde": {
+            "type": "boolean",
+            "description": "True when longitude_speed is negative in the selected zodiac."
+          },
+          "sign": {
+            "type": "string",
+            "enum": [
+              "Aries",
+              "Taurus",
+              "Gemini",
+              "Cancer",
+              "Leo",
+              "Virgo",
+              "Libra",
+              "Scorpio",
+              "Sagittarius",
+              "Capricorn",
+              "Aquarius",
+              "Pisces"
+            ],
+            "description": "Zodiac sign containing the selected longitude."
+          },
+          "degrees_in_sign": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 30,
+            "description": "From 0 inclusive to 30 exclusive."
+          },
+          "nakshatra": {
+            "type": "string",
+            "description": "Present only for sidereal positions."
+          },
+          "pada": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 4,
+            "description": "Present only for sidereal positions."
+          }
+        },
+        "required": [
+          "type",
+          "longitude",
+          "latitude",
+          "longitude_speed",
+          "retrograde",
+          "sign",
+          "degrees_in_sign"
+        ]
+      },
+      "CalculationEngine": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Calculation library."
+          },
+          "version": {
+            "type": "string",
+            "description": "Library version."
+          },
+          "ephemeris": {
+            "type": "string",
+            "description": "Ephemeris dataset used for the calculation."
+          },
+          "timescale": {
+            "type": "string",
+            "description": "Timescale used internally."
+          },
+          "supported_start": {
+            "type": "string",
+            "format": "date-time",
+            "description": "First supported UTC instant, inclusive."
+          },
+          "supported_end_exclusive": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Upper UTC bound, excluded from the supported interval."
+          },
+          "outer_planet_targets": {
+            "type": "string",
+            "description": "Targets used for outer-planet positions."
+          },
+          "node_model": {
+            "type": "string",
+            "description": "Model for the mean lunar nodes Rahu and Ketu."
+          },
+          "speed_method": {
+            "type": "string",
+            "description": "Method used to calculate longitude speed."
+          }
+        },
+        "required": [
+          "name",
+          "version",
+          "ephemeris",
+          "supported_start",
+          "supported_end_exclusive"
+        ]
+      },
+      "ObserverBody": {
+        "type": "object",
+        "properties": {
+          "altitude_deg": {
+            "type": "number",
+            "description": "Geometric altitude of the body center, without refraction."
+          },
+          "azimuth_deg": {
+            "type": "number",
+            "description": "Degrees clockwise from true north."
+          },
+          "distance_km": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Distance from the observer to the body, in kilometres."
+          },
+          "above_horizon": {
+            "type": "boolean",
+            "description": "True when the geometric body-center altitude is above the horizon."
+          }
+        },
+        "required": [
+          "altitude_deg",
+          "azimuth_deg",
+          "distance_km",
+          "above_horizon"
+        ]
+      },
+      "Observer": {
+        "type": "object",
+        "properties": {
+          "reference_frame": {
+            "type": "string",
+            "description": "Reference frame for the topocentric positions."
+          },
+          "azimuth_convention": {
+            "type": "string",
+            "description": "Direction and origin of the azimuth measurement."
+          },
+          "horizon_deg": {
+            "type": "number",
+            "description": "Horizon altitude used for above_horizon, in degrees."
+          },
+          "elevation_m": {
+            "type": "number",
+            "description": "Assumed observer elevation, in metres. This API does not accept an elevation parameter."
+          },
+          "bodies": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/ObserverBody"
+            },
+            "description": "The ten physical bodies; Rahu and Ketu are excluded."
+          }
+        },
+        "required": [
+          "reference_frame",
+          "azimuth_convention",
+          "horizon_deg",
+          "elevation_m",
+          "bodies"
+        ],
+        "description": "Optional topocentric data, present only with include=observer and coordinates. Geometric body-center altitudes exclude atmospheric refraction."
+      },
+      "PlanetaryPositions": {
+        "type": "object",
+        "properties": {
+          "datetime": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Resolved instant in UTC."
+          },
+          "zodiac": {
+            "type": "string",
+            "enum": [
+              "sidereal",
+              "tropical"
+            ],
+            "description": "Resolved zodiac system."
+          },
+          "ayanamsa": {
+            "$ref": "#/components/schemas/Ayanamsa"
+          },
+          "node_convention": {
+            "type": "string",
+            "enum": [
+              "mean"
+            ],
+            "description": "Lunar node convention. The API uses mean nodes."
+          },
+          "reference_frame": {
+            "type": "string",
+            "description": "Reference frame for the geocentric positions."
+          },
+          "units": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Units for each numeric position field."
+          },
+          "engine": {
+            "$ref": "#/components/schemas/CalculationEngine"
+          },
+          "bodies": {
+            "type": "object",
+            "properties": {
+              "sun": {
+                "$ref": "#/components/schemas/PlanetaryBody"
+              },
+              "moon": {
+                "$ref": "#/components/schemas/PlanetaryBody"
+              },
+              "mercury": {
+                "$ref": "#/components/schemas/PlanetaryBody"
+              },
+              "venus": {
+                "$ref": "#/components/schemas/PlanetaryBody"
+              },
+              "mars": {
+                "$ref": "#/components/schemas/PlanetaryBody"
+              },
+              "jupiter": {
+                "$ref": "#/components/schemas/PlanetaryBody"
+              },
+              "saturn": {
+                "$ref": "#/components/schemas/PlanetaryBody"
+              },
+              "uranus": {
+                "$ref": "#/components/schemas/PlanetaryBody"
+              },
+              "neptune": {
+                "$ref": "#/components/schemas/PlanetaryBody"
+              },
+              "pluto": {
+                "$ref": "#/components/schemas/PlanetaryBody"
+              },
+              "rahu": {
+                "$ref": "#/components/schemas/PlanetaryBody"
+              },
+              "ketu": {
+                "$ref": "#/components/schemas/PlanetaryBody"
+              }
+            },
+            "required": [
+              "sun",
+              "moon",
+              "mercury",
+              "venus",
+              "mars",
+              "jupiter",
+              "saturn",
+              "uranus",
+              "neptune",
+              "pluto",
+              "rahu",
+              "ketu"
+            ],
+            "description": "All 12 bodies are always present: Sun, Moon, Mercury, Venus, Mars, Jupiter, Saturn, Uranus, Neptune, Pluto, Rahu and Ketu. No include parameter is needed for outer planets."
+          },
+          "location": {
+            "$ref": "#/components/schemas/Location"
+          },
+          "timezone": {
+            "type": "string",
+            "description": "IANA timezone identifier derived from the coordinates, for example Asia/Kolkata, Europe/London or America/New_York. UTC is the fallback if no timezone is found. The value can be any timezone returned by the location database; it is not a fixed list. timezone is a response field, not a supported query parameter. Local dates and event offsets follow this timezone, including daylight saving time where applicable. Present only when coordinates are supplied; it does not change the UTC datetime or geocentric positions.",
+            "example": "Asia/Kolkata",
+            "readOnly": true
+          },
+          "observer": {
+            "$ref": "#/components/schemas/Observer"
+          }
+        },
+        "required": [
+          "datetime",
+          "zodiac",
+          "ayanamsa",
+          "node_convention",
+          "reference_frame",
+          "units",
+          "engine",
+          "bodies"
+        ],
+        "description": "Calculated positions at one instant. There is no data wrapper. location and timezone appear only with coordinates; observer appears only with include=observer."
+      },
+      "CalendarWindow": {
+        "type": "object",
+        "properties": {
+          "start": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Inclusive start of the calculation window, in ISO-8601 with local UTC offset."
+          },
+          "end": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Exclusive end of the calculation window, in ISO-8601 with local UTC offset."
+          },
+          "end_exclusive": {
+            "type": "boolean",
+            "enum": [
+              true
+            ],
+            "description": "Always true. A transition at end belongs to the next window."
+          }
+        },
+        "required": [
+          "start",
+          "end",
+          "end_exclusive"
+        ]
+      },
+      "EventTime": {
+        "type": "string",
+        "nullable": true,
+        "description": "Event timestamp in the local timezone. timeformat=12 returns YYYY-MM-DDThh:mm:ss AM/PM ±HHMM; timeformat=24 returns ISO-8601 with an offset. Null when the event does not occur. The default 12-hour string is not RFC 3339."
+      },
+      "TimePeriod": {
+        "type": "object",
+        "properties": {
+          "start": {
+            "$ref": "#/components/schemas/EventTime"
+          },
+          "end": {
+            "$ref": "#/components/schemas/EventTime"
+          }
+        },
+        "required": [
+          "start",
+          "end"
+        ]
+      },
+      "TwilightPeriod": {
+        "type": "object",
+        "properties": {
+          "start": {
+            "$ref": "#/components/schemas/EventTime"
+          },
+          "end": {
+            "$ref": "#/components/schemas/EventTime"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ok",
+              "no_crossing"
+            ],
+            "description": "ok when both crossings occur; no_crossing when the requested twilight boundary is not crossed."
+          }
+        },
+        "required": [
+          "start",
+          "end",
+          "status"
+        ]
+      },
+      "MorningEvening": {
+        "type": "object",
+        "properties": {
+          "morning": {
+            "$ref": "#/components/schemas/TimePeriod"
+          },
+          "evening": {
+            "$ref": "#/components/schemas/TimePeriod"
+          }
+        },
+        "required": [
+          "morning",
+          "evening"
+        ]
+      },
+      "TwilightMorningEvening": {
+        "type": "object",
+        "properties": {
+          "morning": {
+            "$ref": "#/components/schemas/TwilightPeriod"
+          },
+          "evening": {
+            "$ref": "#/components/schemas/TwilightPeriod"
+          }
+        },
+        "required": [
+          "morning",
+          "evening"
+        ]
+      },
+      "SunEvents": {
+        "type": "object",
+        "properties": {
+          "dawn": {
+            "$ref": "#/components/schemas/EventTime"
+          },
+          "sunrise": {
+            "$ref": "#/components/schemas/EventTime"
+          },
+          "noon": {
+            "$ref": "#/components/schemas/EventTime"
+          },
+          "sunset": {
+            "$ref": "#/components/schemas/EventTime"
+          },
+          "dusk": {
+            "$ref": "#/components/schemas/EventTime"
+          },
+          "error": {
+            "type": "string",
+            "description": "Present when some events are unavailable."
+          }
+        },
+        "required": [
+          "dawn",
+          "sunrise",
+          "noon",
+          "sunset",
+          "dusk"
+        ]
+      },
+      "Daylight": {
+        "type": "object",
+        "properties": {
+          "duration_seconds": {
+            "type": "integer",
+            "minimum": 0,
+            "nullable": true,
+            "description": "Total daylight during the local calendar day, in seconds. Null when unavailable."
+          },
+          "change_from_yesterday_seconds": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Difference from the previous local day, in seconds. Negative means a shorter day. Null when unavailable."
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "normal",
+              "polar_day",
+              "polar_night",
+              "unavailable"
+            ],
+            "description": "normal for a day with crossings, polar_day for continuous daylight, polar_night for continuous darkness, or unavailable when the duration cannot be calculated."
+          }
+        },
+        "required": [
+          "duration_seconds",
+          "change_from_yesterday_seconds",
+          "status"
+        ]
+      },
+      "Sun": {
+        "type": "object",
+        "properties": {
+          "events": {
+            "$ref": "#/components/schemas/SunEvents"
+          },
+          "daylight": {
+            "$ref": "#/components/schemas/Daylight"
+          },
+          "twilight_periods": {
+            "type": "object",
+            "properties": {
+              "civil": {
+                "$ref": "#/components/schemas/TwilightMorningEvening"
+              },
+              "nautical": {
+                "$ref": "#/components/schemas/TwilightMorningEvening"
+              },
+              "astronomical": {
+                "$ref": "#/components/schemas/TwilightMorningEvening"
+              }
+            },
+            "required": [
+              "civil",
+              "nautical",
+              "astronomical"
+            ],
+            "description": "Civil, nautical and astronomical twilight intervals, each with morning/evening bounds and a status."
+          },
+          "twilight": {
+            "$ref": "#/components/schemas/MorningEvening"
+          },
+          "photography": {
+            "type": "object",
+            "properties": {
+              "golden_hour": {
+                "$ref": "#/components/schemas/MorningEvening"
+              },
+              "blue_hour": {
+                "$ref": "#/components/schemas/MorningEvening"
+              }
+            },
+            "description": "Available golden_hour and blue_hour intervals. A period is omitted if its required crossings do not occur."
+          }
+        },
+        "required": [
+          "events",
+          "daylight",
+          "twilight_periods"
+        ],
+        "description": "Sun events, daylight duration and available twilight and photography periods."
+      },
+      "MoonDetails": {
+        "type": "object",
+        "properties": {
+          "evaluated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Local noon on the requested date, always ISO-8601."
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ok",
+              "outside_supported_range"
+            ],
+            "description": "ok when calculated, or outside_supported_range when local noon falls outside the supported UTC interval."
+          },
+          "illumination_pct": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100,
+            "nullable": true,
+            "description": "Illuminated portion of the Moon, from 0 to 100 percent. Null outside the supported interval."
+          },
+          "phase_angle_deg": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 360,
+            "nullable": true,
+            "description": "Sun–Moon ecliptic longitude separation, from 0 to 360 degrees. Null outside the supported interval."
+          }
+        },
+        "required": [
+          "evaluated_at",
+          "status",
+          "illumination_pct",
+          "phase_angle_deg"
+        ],
+        "description": "Optional Moon calculation, present only with include=moon_details. Evaluated at local noon on the requested date."
+      },
+      "Moon": {
+        "type": "object",
+        "properties": {
+          "moonrise": {
+            "$ref": "#/components/schemas/EventTime"
+          },
+          "moonset": {
+            "$ref": "#/components/schemas/EventTime"
+          },
+          "phase_value": {
+            "type": "number",
+            "description": "Astral phase value, approximately 0 to 28; not illumination percent."
+          },
+          "phase_description": {
+            "type": "string",
+            "description": "Readable Moon phase name associated with phase_value.",
+            "example": "Waxing Gibbous"
+          },
+          "error": {
+            "type": "string",
+            "description": "Calculation message when one or more Moon events are unavailable. Independently available fields remain present."
+          },
+          "details": {
+            "$ref": "#/components/schemas/MoonDetails"
+          }
+        },
+        "required": [
+          "moonrise",
+          "moonset",
+          "phase_value",
+          "phase_description"
+        ],
+        "description": "Moonrise, moonset and approximate phase, with optional precise Moon details."
+      },
+      "TodaySummary": {
+        "type": "object",
+        "properties": {
+          "day_progress_pct": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100,
+            "nullable": true,
+            "description": "Rounded percentage of the sunrise-to-sunset interval already elapsed, clamped to 0–100. Null when the required events are unavailable."
+          },
+          "daylight_remaining_seconds": {
+            "type": "integer",
+            "minimum": 0,
+            "nullable": true,
+            "description": "Daylight remaining from the request time until the end of the local day, in seconds. Null when unavailable."
+          },
+          "sunrise": {
+            "type": "string",
+            "nullable": true,
+            "description": "Short local clock time: h:mm AM/PM for timeformat=12, or HH:mm for timeformat=24. No date or UTC offset is included. Null when the event is unavailable.",
+            "example": "06:30"
+          },
+          "sunset": {
+            "type": "string",
+            "nullable": true,
+            "description": "Short local clock time: h:mm AM/PM for timeformat=12, or HH:mm for timeformat=24. No date or UTC offset is included. Null when the event is unavailable.",
+            "example": "06:30"
+          }
+        },
+        "required": [
+          "day_progress_pct",
+          "daylight_remaining_seconds",
+          "sunrise",
+          "sunset"
+        ],
+        "description": "Present when date is omitted and the summary is available. Sunrise and sunset use short clock times."
+      },
+      "TomorrowSummary": {
+        "type": "object",
+        "properties": {
+          "sunrise": {
+            "type": "string",
+            "nullable": true,
+            "description": "Short local clock time: h:mm AM/PM for timeformat=12, or HH:mm for timeformat=24. No date or UTC offset is included. Null when the event is unavailable.",
+            "example": "06:30"
+          },
+          "sunset": {
+            "type": "string",
+            "nullable": true,
+            "description": "Short local clock time: h:mm AM/PM for timeformat=12, or HH:mm for timeformat=24. No date or UTC offset is included. Null when the event is unavailable.",
+            "example": "06:30"
+          }
+        },
+        "required": [
+          "sunrise",
+          "sunset"
+        ],
+        "description": "Present when date is omitted and the summary is available. Sunrise and sunset use short clock times."
+      },
+      "Times": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date",
+            "description": "Resolved local calendar date for the requested coordinates.",
+            "example": "2026-10-01"
+          },
+          "location": {
+            "$ref": "#/components/schemas/Location"
+          },
+          "timezone": {
+            "type": "string",
+            "description": "IANA timezone identifier derived from the coordinates, for example Asia/Kolkata, Europe/London or America/New_York. UTC is the fallback if no timezone is found. The value can be any timezone returned by the location database; it is not a fixed list. timezone is a response field, not a supported query parameter. Local dates and event offsets follow this timezone, including daylight saving time where applicable.",
+            "example": "Asia/Kolkata",
+            "readOnly": true
+          },
+          "sun": {
+            "$ref": "#/components/schemas/Sun"
+          },
+          "moon": {
+            "$ref": "#/components/schemas/Moon"
+          },
+          "rahukaalam": {
+            "$ref": "#/components/schemas/TimePeriod"
+          },
+          "today": {
+            "$ref": "#/components/schemas/TodaySummary"
+          },
+          "tomorrow": {
+            "$ref": "#/components/schemas/TomorrowSummary"
+          }
+        },
+        "required": [
+          "date",
+          "location",
+          "timezone",
+          "sun",
+          "moon"
+        ],
+        "description": "No data wrapper. Rahu Kaal and some periods can be absent where the needed Sun events do not occur."
+      },
+      "TithiValue": {
+        "type": "object",
+        "properties": {
+          "number": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 30,
+            "description": "Tithi number from 1 to 30."
+          },
+          "name": {
+            "type": "string",
+            "description": "Tithi name, including Purnima or Amavasya at the end of each half."
+          },
+          "paksha": {
+            "type": "string",
+            "enum": [
+              "Shukla",
+              "Krishna"
+            ],
+            "description": "Shukla for the waxing half; Krishna for the waning half."
+          }
+        },
+        "required": [
+          "number",
+          "name",
+          "paksha"
+        ]
+      },
+      "TithiLimb": {
+        "type": "object",
+        "properties": {
+          "at_start": {
+            "$ref": "#/components/schemas/TithiValue"
+          },
+          "transitions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "datetime": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "Transition instant, in ISO-8601 with local UTC offset."
+                },
+                "to": {
+                  "$ref": "#/components/schemas/TithiValue"
+                }
+              },
+              "required": [
+                "datetime",
+                "to"
+              ]
+            },
+            "description": "Transitions inside [window.start, window.end). An empty array means the value does not change in this window."
+          }
+        },
+        "required": [
+          "at_start",
+          "transitions"
+        ],
+        "description": "Value at the start of the calculation window, followed by transitions in time order."
+      },
+      "NakshatraValue": {
+        "type": "object",
+        "properties": {
+          "number": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 27,
+            "description": "Nakshatra index from 1 to 27."
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the sidereal lunar mansion."
+          }
+        },
+        "required": [
+          "number",
+          "name"
+        ]
+      },
+      "NakshatraLimb": {
+        "type": "object",
+        "properties": {
+          "at_start": {
+            "$ref": "#/components/schemas/NakshatraValue"
+          },
+          "transitions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "datetime": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "Transition instant, in ISO-8601 with local UTC offset."
+                },
+                "to": {
+                  "$ref": "#/components/schemas/NakshatraValue"
+                }
+              },
+              "required": [
+                "datetime",
+                "to"
+              ]
+            },
+            "description": "Transitions inside [window.start, window.end). An empty array means the value does not change in this window."
+          }
+        },
+        "required": [
+          "at_start",
+          "transitions"
+        ],
+        "description": "Value at the start of the calculation window, followed by transitions in time order."
+      },
+      "YogaValue": {
+        "type": "object",
+        "properties": {
+          "number": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 27,
+            "description": "Yoga index from 1 to 27."
+          },
+          "name": {
+            "type": "string",
+            "description": "Yoga name from the sidereal Sun-plus-Moon longitude."
+          }
+        },
+        "required": [
+          "number",
+          "name"
+        ]
+      },
+      "YogaLimb": {
+        "type": "object",
+        "properties": {
+          "at_start": {
+            "$ref": "#/components/schemas/YogaValue"
+          },
+          "transitions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "datetime": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "Transition instant, in ISO-8601 with local UTC offset."
+                },
+                "to": {
+                  "$ref": "#/components/schemas/YogaValue"
+                }
+              },
+              "required": [
+                "datetime",
+                "to"
+              ]
+            },
+            "description": "Transitions inside [window.start, window.end). An empty array means the value does not change in this window."
+          }
+        },
+        "required": [
+          "at_start",
+          "transitions"
+        ],
+        "description": "Value at the start of the calculation window, followed by transitions in time order."
+      },
+      "KaranaValue": {
+        "type": "object",
+        "properties": {
+          "number": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 60,
+            "description": "Half-tithi index from 1 to 60."
+          },
+          "name": {
+            "type": "string",
+            "description": "Karana name for the half-tithi."
+          }
+        },
+        "required": [
+          "number",
+          "name"
+        ]
+      },
+      "KaranaLimb": {
+        "type": "object",
+        "properties": {
+          "at_start": {
+            "$ref": "#/components/schemas/KaranaValue"
+          },
+          "transitions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "datetime": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "Transition instant, in ISO-8601 with local UTC offset."
+                },
+                "to": {
+                  "$ref": "#/components/schemas/KaranaValue"
+                }
+              },
+              "required": [
+                "datetime",
+                "to"
+              ]
+            },
+            "description": "Transitions inside [window.start, window.end). An empty array means the value does not change in this window."
+          }
+        },
+        "required": [
+          "at_start",
+          "transitions"
+        ],
+        "description": "Value at the start of the calculation window, followed by transitions in time order."
+      },
+      "Panchang": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date",
+            "description": "Resolved local calendar date."
+          },
+          "location": {
+            "$ref": "#/components/schemas/Location"
+          },
+          "timezone": {
+            "type": "string",
+            "description": "IANA timezone identifier derived from the coordinates, for example Asia/Kolkata, Europe/London or America/New_York. UTC is the fallback if no timezone is found. The value can be any timezone returned by the location database; it is not a fixed list. timezone is a response field, not a supported query parameter. Local dates and event offsets follow this timezone, including daylight saving time where applicable.",
+            "example": "Asia/Kolkata",
+            "readOnly": true
+          },
+          "window": {
+            "$ref": "#/components/schemas/CalendarWindow"
+          },
+          "day_basis": {
+            "type": "string",
+            "enum": [
+              "sunrise_to_next_sunrise",
+              "civil_day_fallback_no_sunrise"
+            ],
+            "description": "sunrise_to_next_sunrise uses consecutive local sunrises. civil_day_fallback_no_sunrise uses local midnight to midnight when sunrise is unavailable."
+          },
+          "weekday": {
+            "type": "string",
+            "description": "English weekday name for the requested local date.",
+            "example": "Thursday"
+          },
+          "tithi": {
+            "$ref": "#/components/schemas/TithiLimb"
+          },
+          "nakshatra": {
+            "$ref": "#/components/schemas/NakshatraLimb"
+          },
+          "yoga": {
+            "$ref": "#/components/schemas/YogaLimb"
+          },
+          "karana": {
+            "$ref": "#/components/schemas/KaranaLimb"
+          },
+          "conventions": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Calculation conventions for ayanamsa, positions, tithi, nakshatra, yoga, karana and scope."
+          }
+        },
+        "required": [
+          "date",
+          "location",
+          "timezone",
+          "window",
+          "day_basis",
+          "weekday",
+          "tithi",
+          "nakshatra",
+          "yoga",
+          "karana",
+          "conventions"
+        ],
+        "description": "Daily astronomical Panchang, with each limb evaluated at the window start and all transitions inside the window. There is no data wrapper."
+      },
+      "GatewayError": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Error"
+          },
+          {
+            "type": "object",
+            "required": [
+              "code"
+            ],
+            "properties": {
+              "code": {
+                "type": "string",
+                "enum": [
+                  "upstream_unavailable",
+                  "invalid_upstream_response",
+                  "upstream_timeout"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "CalculationError": {
+        "description": "A structured error from the calculation service or an error generated by the API. Generated errors always include code. Upstream errors can omit code or use service-specific codes.",
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/Error"
+          },
+          {
+            "$ref": "#/components/schemas/ValidationError"
+          }
+        ]
+      }
+    },
+    "examples": {
+      "SiderealPositions": {
+        "summary": "Sidereal positions with observer data; 2000-01-01T12:00:00Z, Mumbai.",
+        "value": {
+          "datetime": "2000-01-01T12:00:00Z",
+          "zodiac": "sidereal",
+          "ayanamsa": {
+            "name": "Lahiri",
+            "model": "J2000 anchor + IAU 2006 precession (approximation)",
+            "degrees": 23.85322235640474
+          },
+          "node_convention": "mean",
+          "reference_frame": "geocentric apparent ecliptic and true equinox of date",
+          "units": {
+            "longitude": "degrees",
+            "latitude": "degrees",
+            "degrees_in_sign": "degrees",
+            "longitude_speed": "degrees/day"
+          },
+          "engine": {
+            "name": "Skyfield",
+            "version": "1.55",
+            "ephemeris": "JPL DE421",
+            "timescale": "Skyfield bundled timescale; UTC input converted to TT/TDB",
+            "supported_start": "1900-01-01T00:00:00Z",
+            "supported_end_exclusive": "2053-01-01T00:00:00Z",
+            "outer_planet_targets": "planetary system barycenters",
+            "node_model": "Meeus mean lunar node; not an apparent observed body",
+            "speed_method": "central difference, +/-0.001 TT day, selected zodiac"
+          },
+          "bodies": {
+            "sun": {
+              "type": "luminary",
+              "longitude": 256.5157002159959,
+              "latitude": 0.0002274254618305167,
+              "longitude_speed": 1.019393589132278,
+              "retrograde": false,
+              "sign": "Sagittarius",
+              "degrees_in_sign": 16.515700215995878,
+              "nakshatra": "Purva Ashadha",
+              "pada": 1
+            },
+            "moon": {
+              "type": "luminary",
+              "longitude": 199.4705778779193,
+              "latitude": 5.170739676649003,
+              "longitude_speed": 12.021285695027473,
+              "retrograde": false,
+              "sign": "Libra",
+              "degrees_in_sign": 19.47057787791931,
+              "nakshatra": "Swati",
+              "pada": 4
+            },
+            "mercury": {
+              "type": "planet",
+              "longitude": 248.03606079709385,
+              "latitude": -0.9948296035348227,
+              "longitude_speed": 1.5562154701882491,
+              "retrograde": false,
+              "sign": "Sagittarius",
+              "degrees_in_sign": 8.036060797093853,
+              "nakshatra": "Mula",
+              "pada": 3
+            },
+            "venus": {
+              "type": "planet",
+              "longitude": 217.71257072862352,
+              "latitude": 2.066348949824587,
+              "longitude_speed": 1.2090022556918711,
+              "retrograde": false,
+              "sign": "Scorpio",
+              "degrees_in_sign": 7.712570728623518,
+              "nakshatra": "Anuradha",
+              "pada": 2
+            },
+            "mars": {
+              "type": "planet",
+              "longitude": 304.11008319991487,
+              "latitude": -1.0677852457020913,
+              "longitude_speed": 0.7756335353690247,
+              "retrograde": false,
+              "sign": "Aquarius",
+              "degrees_in_sign": 4.110083199914868,
+              "nakshatra": "Dhanishta",
+              "pada": 4
+            },
+            "jupiter": {
+              "type": "planet",
+              "longitude": 1.3998645255342979,
+              "latitude": -1.262192890629165,
+              "longitude_speed": 0.040721059079373845,
+              "retrograde": false,
+              "sign": "Aries",
+              "degrees_in_sign": 1.3998645255342979,
+              "nakshatra": "Ashwini",
+              "pada": 1
+            },
+            "saturn": {
+              "type": "planet",
+              "longitude": 16.542440685345102,
+              "latitude": -2.4448548942230715,
+              "longitude_speed": -0.019985199557481792,
+              "retrograde": true,
+              "sign": "Aries",
+              "degrees_in_sign": 16.542440685345102,
+              "nakshatra": "Bharani",
+              "pada": 1
+            },
+            "uranus": {
+              "type": "planet",
+              "longitude": 290.9559684926369,
+              "latitude": -0.6583280055723225,
+              "longitude_speed": 0.0503033850520751,
+              "retrograde": false,
+              "sign": "Capricorn",
+              "degrees_in_sign": 20.955968492636885,
+              "nakshatra": "Shravana",
+              "pada": 4
+            },
+            "neptune": {
+              "type": "planet",
+              "longitude": 279.3397924393081,
+              "latitude": 0.2349968989356531,
+              "longitude_speed": 0.03553004682999017,
+              "retrograde": false,
+              "sign": "Capricorn",
+              "degrees_in_sign": 9.339792439308098,
+              "nakshatra": "Uttara Ashadha",
+              "pada": 4
+            },
+            "pluto": {
+              "type": "dwarf_planet",
+              "longitude": 227.601558286653,
+              "latitude": 10.85522999082413,
+              "longitude_speed": 0.03511323204463679,
+              "retrograde": false,
+              "sign": "Scorpio",
+              "degrees_in_sign": 17.60155828665299,
+              "nakshatra": "Jyeshtha",
+              "pada": 1
+            },
+            "rahu": {
+              "type": "lunar_node",
+              "longitude": 101.18741620834979,
+              "latitude": 0,
+              "longitude_speed": -0.05299201900754724,
+              "retrograde": true,
+              "sign": "Cancer",
+              "degrees_in_sign": 11.187416208349788,
+              "nakshatra": "Pushya",
+              "pada": 3
+            },
+            "ketu": {
+              "type": "lunar_node",
+              "longitude": 281.18741620834976,
+              "latitude": 0,
+              "longitude_speed": -0.05299201899333639,
+              "retrograde": true,
+              "sign": "Capricorn",
+              "degrees_in_sign": 11.18741620834976,
+              "nakshatra": "Shravana",
+              "pada": 1
+            }
+          },
+          "observer": {
+            "reference_frame": "topocentric apparent; geometric altitude without atmospheric refraction",
+            "azimuth_convention": "degrees clockwise from true north",
+            "horizon_deg": 0,
+            "elevation_m": 0,
+            "bodies": {
+              "sun": {
+                "altitude_deg": 8.048691694781233,
+                "azimuth_deg": 242.15878242965698,
+                "distance_km": 147102819.5837628,
+                "above_horizon": true
+              },
+              "moon": {
+                "altitude_deg": -42.67533014462774,
+                "azimuth_deg": 272.4194039448816,
+                "distance_km": 406711.00531416765,
+                "above_horizon": false
+              },
+              "mercury": {
+                "altitude_deg": -0.2525352561553556,
+                "azimuth_deg": 244.1563658779804,
+                "distance_km": 211751240.08849847,
+                "above_horizon": false
+              },
+              "venus": {
+                "altitude_deg": -27.395709878969004,
+                "azimuth_deg": 258.5838860282115,
+                "distance_km": 170182363.0448499,
+                "above_horizon": false
+              },
+              "mars": {
+                "altitude_deg": 50.679813976316034,
+                "azimuth_deg": 216.57959448819702,
+                "distance_km": 276704426.0667476,
+                "above_horizon": true
+              },
+              "jupiter": {
+                "altitude_deg": 58.62154390020443,
+                "azimuth_deg": 105.26839397994608,
+                "distance_km": 691312515.4451069,
+                "above_horizon": true
+              },
+              "saturn": {
+                "altitude_deg": 45.94052759036681,
+                "azimuth_deg": 91.43570397599358,
+                "distance_km": 1294435331.2001705,
+                "above_horizon": true
+              },
+              "uranus": {
+                "altitude_deg": 39.54744745151479,
+                "azimuth_deg": 226.59048601247054,
+                "distance_km": 3100736503.040549,
+                "above_horizon": true
+              },
+              "neptune": {
+                "altitude_deg": 29.388131983845152,
+                "azimuth_deg": 233.53050716944273,
+                "distance_km": 4641195933.166662,
+                "above_horizon": true
+              },
+              "pluto": {
+                "altitude_deg": -14.82592138505238,
+                "azimuth_deg": 262.83634531763005,
+                "distance_km": 4647164671.719965,
+                "above_horizon": false
+              }
+            }
+          },
+          "location": {
+            "lat": 19.076,
+            "lon": 72.878
+          },
+          "timezone": "Asia/Kolkata"
+        }
+      },
+      "TropicalPositions": {
+        "summary": "Tropical positions without coordinates; 2000-01-01T12:00:00Z.",
+        "value": {
+          "datetime": "2000-01-01T12:00:00Z",
+          "zodiac": "tropical",
+          "ayanamsa": null,
+          "node_convention": "mean",
+          "reference_frame": "geocentric apparent ecliptic and true equinox of date",
+          "units": {
+            "longitude": "degrees",
+            "latitude": "degrees",
+            "degrees_in_sign": "degrees",
+            "longitude_speed": "degrees/day"
+          },
+          "engine": {
+            "name": "Skyfield",
+            "version": "1.55",
+            "ephemeris": "JPL DE421",
+            "timescale": "Skyfield bundled timescale; UTC input converted to TT/TDB",
+            "supported_start": "1900-01-01T00:00:00Z",
+            "supported_end_exclusive": "2053-01-01T00:00:00Z",
+            "outer_planet_targets": "planetary system barycenters",
+            "node_model": "Meeus mean lunar node; not an apparent observed body",
+            "speed_method": "central difference, +/-0.001 TT day, selected zodiac"
+          },
+          "bodies": {
+            "sun": {
+              "type": "luminary",
+              "longitude": 280.3689225724006,
+              "latitude": 0.0002274254618305167,
+              "longitude_speed": 1.0194338826181593,
+              "retrograde": false,
+              "sign": "Capricorn",
+              "degrees_in_sign": 10.368922572400606
+            },
+            "moon": {
+              "type": "luminary",
+              "longitude": 223.32380023432404,
+              "latitude": 5.170739676649003,
+              "longitude_speed": 12.021325988527565,
+              "retrograde": false,
+              "sign": "Scorpio",
+              "degrees_in_sign": 13.32380023432404
+            },
+            "mercury": {
+              "type": "planet",
+              "longitude": 271.8892831534986,
+              "latitude": -0.9948296035348227,
+              "longitude_speed": 1.5562557636883412,
+              "retrograde": false,
+              "sign": "Capricorn",
+              "degrees_in_sign": 1.8892831534985817
+            },
+            "venus": {
+              "type": "planet",
+              "longitude": 241.56579308502825,
+              "latitude": 2.066348949824587,
+              "longitude_speed": 1.2090425491919632,
+              "retrograde": false,
+              "sign": "Sagittarius",
+              "degrees_in_sign": 1.5657930850282469
+            },
+            "mars": {
+              "type": "planet",
+              "longitude": 327.9633055563196,
+              "latitude": -1.0677852457020913,
+              "longitude_speed": 0.7756738288549059,
+              "retrograde": false,
+              "sign": "Aquarius",
+              "degrees_in_sign": 27.963305556319597
+            },
+            "jupiter": {
+              "type": "planet",
+              "longitude": 25.253086881939037,
+              "latitude": -1.262192890629165,
+              "longitude_speed": 0.04076135257946589,
+              "retrograde": false,
+              "sign": "Aries",
+              "degrees_in_sign": 25.253086881939037
+            },
+            "saturn": {
+              "type": "planet",
+              "longitude": 40.39566304174984,
+              "latitude": -2.4448548942230715,
+              "longitude_speed": -0.019944906057389744,
+              "retrograde": true,
+              "sign": "Taurus",
+              "degrees_in_sign": 10.395663041749842
+            },
+            "uranus": {
+              "type": "planet",
+              "longitude": 314.8091908490416,
+              "latitude": -0.6583280055723225,
+              "longitude_speed": 0.05034367853795629,
+              "retrograde": false,
+              "sign": "Aquarius",
+              "degrees_in_sign": 14.809190849041613
+            },
+            "neptune": {
+              "type": "planet",
+              "longitude": 303.1930147957128,
+              "latitude": 0.2349968989356531,
+              "longitude_speed": 0.03557034031587136,
+              "retrograde": false,
+              "sign": "Aquarius",
+              "degrees_in_sign": 3.193014795712827
+            },
+            "pluto": {
+              "type": "dwarf_planet",
+              "longitude": 251.45478064305772,
+              "latitude": 10.85522999082413,
+              "longitude_speed": 0.035153525544728836,
+              "retrograde": false,
+              "sign": "Sagittarius",
+              "degrees_in_sign": 11.454780643057717
+            },
+            "rahu": {
+              "type": "lunar_node",
+              "longitude": 125.04063856475453,
+              "latitude": 0,
+              "longitude_speed": -0.052951725507455194,
+              "retrograde": true,
+              "sign": "Leo",
+              "degrees_in_sign": 5.040638564754531
+            },
+            "ketu": {
+              "type": "lunar_node",
+              "longitude": 305.04063856475454,
+              "latitude": 0,
+              "longitude_speed": -0.052951725507455194,
+              "retrograde": true,
+              "sign": "Aquarius",
+              "degrees_in_sign": 5.040638564754545
+            }
+          }
+        }
+      },
+      "MumbaiPanchang": {
+        "summary": "Mumbai, 2026-10-01. Captured from the public API.",
+        "value": {
+          "date": "2026-10-01",
+          "location": {
+            "lat": 19.076,
+            "lon": 72.878
+          },
+          "timezone": "Asia/Kolkata",
+          "window": {
+            "start": "2026-10-01T06:29:17.496578+05:30",
+            "end": "2026-10-02T06:29:30.257545+05:30",
+            "end_exclusive": true
+          },
+          "day_basis": "sunrise_to_next_sunrise",
+          "weekday": "Thursday",
+          "tithi": {
+            "at_start": {
+              "number": 20,
+              "name": "Panchami",
+              "paksha": "Krishna"
+            },
+            "transitions": [
+              {
+                "datetime": "2026-10-01T12:35:43.103591+05:30",
+                "to": {
+                  "number": 21,
+                  "name": "Shashthi",
+                  "paksha": "Krishna"
+                }
+              }
+            ]
+          },
+          "nakshatra": {
+            "at_start": {
+              "number": 4,
+              "name": "Rohini"
+            },
+            "transitions": [
+              {
+                "datetime": "2026-10-02T04:27:24.803122+05:30",
+                "to": {
+                  "number": 5,
+                  "name": "Mrigashira"
+                }
+              }
+            ]
+          },
+          "yoga": {
+            "at_start": {
+              "number": 16,
+              "name": "Siddhi"
+            },
+            "transitions": [
+              {
+                "datetime": "2026-10-01T21:18:23.791264+05:30",
+                "to": {
+                  "number": 17,
+                  "name": "Vyatipata"
+                }
+              }
+            ]
+          },
+          "karana": {
+            "at_start": {
+              "number": 40,
+              "name": "Taitila"
+            },
+            "transitions": [
+              {
+                "datetime": "2026-10-01T12:35:43.103591+05:30",
+                "to": {
+                  "number": 41,
+                  "name": "Gara"
+                }
+              },
+              {
+                "datetime": "2026-10-01T23:25:24.459928+05:30",
+                "to": {
+                  "number": 42,
+                  "name": "Vanija"
+                }
+              }
+            ]
+          },
+          "conventions": {
+            "ayanamsa": "Lahiri approximation; same model as /astronomy",
+            "positions": "apparent geocentric ecliptic of date",
+            "tithi": "Moon minus Sun, 30 equal divisions",
+            "nakshatra": "sidereal Moon, 27 equal divisions",
+            "yoga": "sidereal Moon plus Sun, 27 equal divisions",
+            "karana": "Moon minus Sun, 60 equal divisions",
+            "scope": "astronomical limbs; no festival or regional observance rules"
+          }
+        }
+      },
+      "MumbaiTimes": {
+        "summary": "Mumbai, 2026-10-01, 24-hour timestamps with Moon details.",
+        "value": {
+          "date": "2026-10-01",
+          "timezone": "Asia/Kolkata",
+          "location": {
+            "lat": 19.076,
+            "lon": 72.878
+          },
+          "sun": {
+            "events": {
+              "dawn": "2026-10-01T06:06:59.104550+05:30",
+              "sunrise": "2026-10-01T06:29:17.496578+05:30",
+              "noon": "2026-10-01T12:28:19+05:30",
+              "sunset": "2026-10-01T18:26:53.735942+05:30",
+              "dusk": "2026-10-01T18:49:11.330546+05:30"
+            },
+            "daylight": {
+              "duration_seconds": 43056,
+              "change_from_yesterday_seconds": -64,
+              "status": "normal"
+            },
+            "twilight_periods": {
+              "civil": {
+                "morning": {
+                  "start": "2026-10-01T06:06:59.104550+05:30",
+                  "end": "2026-10-01T06:29:17.496578+05:30",
+                  "status": "ok"
+                },
+                "evening": {
+                  "start": "2026-10-01T18:26:53.735942+05:30",
+                  "end": "2026-10-01T18:49:11.330546+05:30",
+                  "status": "ok"
+                }
+              },
+              "nautical": {
+                "morning": {
+                  "start": "2026-10-01T05:41:42.176856+05:30",
+                  "end": "2026-10-01T06:06:59.104550+05:30",
+                  "status": "ok"
+                },
+                "evening": {
+                  "start": "2026-10-01T18:49:11.330546+05:30",
+                  "end": "2026-10-01T19:14:27.175261+05:30",
+                  "status": "ok"
+                }
+              },
+              "astronomical": {
+                "morning": {
+                  "start": "2026-10-01T05:16:19.730117+05:30",
+                  "end": "2026-10-01T05:41:42.176856+05:30",
+                  "status": "ok"
+                },
+                "evening": {
+                  "start": "2026-10-01T19:14:27.175261+05:30",
+                  "end": "2026-10-01T19:39:48.291006+05:30",
+                  "status": "ok"
+                }
+              }
+            },
+            "twilight": {
+              "morning": {
+                "start": "2026-10-01T06:06:59.104550+05:30",
+                "end": "2026-10-01T06:29:17.496578+05:30"
+              },
+              "evening": {
+                "start": "2026-10-01T18:26:53.735942+05:30",
+                "end": "2026-10-01T18:49:11.330546+05:30"
+              }
+            },
+            "photography": {
+              "golden_hour": {
+                "morning": {
+                  "start": "2026-10-01T06:15:20.240229+05:30",
+                  "end": "2026-10-01T06:57:31.260031+05:30"
+                },
+                "evening": {
+                  "start": "2026-10-01T17:58:40.812208+05:30",
+                  "end": "2026-10-01T18:40:50.509051+05:30"
+                }
+              },
+              "blue_hour": {
+                "morning": {
+                  "start": "2026-10-01T06:06:59.104550+05:30",
+                  "end": "2026-10-01T06:15:20.240229+05:30"
+                },
+                "evening": {
+                  "start": "2026-10-01T18:40:50.509051+05:30",
+                  "end": "2026-10-01T18:49:11.330546+05:30"
+                }
+              }
+            }
+          },
+          "moon": {
+            "moonrise": "2026-10-01T22:03:00+05:30",
+            "moonset": "2026-10-01T10:55:00+05:30",
+            "phase_value": 18.855666666666668,
+            "phase_description": "Waning Gibbous",
+            "details": {
+              "evaluated_at": "2026-10-01T12:00:00+05:30",
+              "status": "ok",
+              "illumination_pct": 75.24699892540643,
+              "phase_angle_deg": 239.67007006673308
+            }
+          },
+          "rahukaalam": {
+            "start": "2026-10-01T13:57:47.496578+05:30",
+            "end": "2026-10-01T15:27:29.496578+05:30"
+          }
+        }
+      },
+      "PolarTimes": {
+        "summary": "Longyearbyen, 2026-12-21. Missing events are null; Rahu Kaal is absent.",
+        "value": {
+          "date": "2026-12-21",
+          "timezone": "Arctic/Longyearbyen",
+          "location": {
+            "lat": 78.2232,
+            "lon": 15.6469
+          },
+          "sun": {
+            "events": {
+              "error": "expected a number in range from -1 up to 1, got 1.5157932535815861",
+              "dawn": null,
+              "sunrise": null,
+              "noon": "2026-12-21T11:55:14 AM +0100",
+              "sunset": null,
+              "dusk": null
+            },
+            "daylight": {
+              "duration_seconds": 0,
+              "change_from_yesterday_seconds": 0,
+              "status": "polar_night"
+            },
+            "twilight_periods": {
+              "civil": {
+                "morning": {
+                  "start": null,
+                  "end": null,
+                  "status": "no_crossing"
+                },
+                "evening": {
+                  "start": null,
+                  "end": null,
+                  "status": "no_crossing"
+                }
+              },
+              "nautical": {
+                "morning": {
+                  "start": null,
+                  "end": null,
+                  "status": "no_crossing"
+                },
+                "evening": {
+                  "start": null,
+                  "end": null,
+                  "status": "no_crossing"
+                }
+              },
+              "astronomical": {
+                "morning": {
+                  "start": "2026-12-21T07:36:36 AM +0100",
+                  "end": "2026-12-21T10:55:59 AM +0100",
+                  "status": "ok"
+                },
+                "evening": {
+                  "start": "2026-12-21T12:54:55 PM +0100",
+                  "end": "2026-12-21T04:14:18 PM +0100",
+                  "status": "ok"
+                }
+              }
+            }
+          },
+          "moon": {
+            "error": "Moon never rises on this date, at this location",
+            "moonrise": null,
+            "moonset": null,
+            "phase_value": 11.155666666666667,
+            "phase_description": "Waxing Gibbous"
+          }
+        }
+      },
+      "CurrentTimes": {
+        "summary": "Mumbai with no date supplied. Includes today and tomorrow summaries; captured 2026-10-19.",
+        "value": {
+          "date": "2026-10-19",
+          "timezone": "Asia/Kolkata",
+          "location": {
+            "lat": 19.076,
+            "lon": 72.878
+          },
+          "sun": {
+            "events": {
+              "dawn": "2026-10-19T06:11:23 AM +0530",
+              "sunrise": "2026-10-19T06:33:58 AM +0530",
+              "noon": "2026-10-19T12:23:31 PM +0530",
+              "sunset": "2026-10-19T06:12:41 PM +0530",
+              "dusk": "2026-10-19T06:35:16 PM +0530"
+            },
+            "daylight": {
+              "duration_seconds": 41923,
+              "change_from_yesterday_seconds": -61,
+              "status": "normal"
+            },
+            "twilight_periods": {
+              "civil": {
+                "morning": {
+                  "start": "2026-10-19T06:11:23 AM +0530",
+                  "end": "2026-10-19T06:33:58 AM +0530",
+                  "status": "ok"
+                },
+                "evening": {
+                  "start": "2026-10-19T06:12:41 PM +0530",
+                  "end": "2026-10-19T06:35:16 PM +0530",
+                  "status": "ok"
+                }
+              },
+              "nautical": {
+                "morning": {
+                  "start": "2026-10-19T05:45:53 AM +0530",
+                  "end": "2026-10-19T06:11:23 AM +0530",
+                  "status": "ok"
+                },
+                "evening": {
+                  "start": "2026-10-19T06:35:16 PM +0530",
+                  "end": "2026-10-19T07:00:46 PM +0530",
+                  "status": "ok"
+                }
+              },
+              "astronomical": {
+                "morning": {
+                  "start": "2026-10-19T05:20:24 AM +0530",
+                  "end": "2026-10-19T05:45:53 AM +0530",
+                  "status": "ok"
+                },
+                "evening": {
+                  "start": "2026-10-19T07:00:46 PM +0530",
+                  "end": "2026-10-19T07:26:14 PM +0530",
+                  "status": "ok"
+                }
+              }
+            },
+            "twilight": {
+              "morning": {
+                "start": "2026-10-19T06:11:23 AM +0530",
+                "end": "2026-10-19T06:33:58 AM +0530"
+              },
+              "evening": {
+                "start": "2026-10-19T06:12:41 PM +0530",
+                "end": "2026-10-19T06:35:16 PM +0530"
+              }
+            },
+            "photography": {
+              "golden_hour": {
+                "morning": {
+                  "start": "2026-10-19T06:19:50 AM +0530",
+                  "end": "2026-10-19T07:02:42 AM +0530"
+                },
+                "evening": {
+                  "start": "2026-10-19T05:43:58 PM +0530",
+                  "end": "2026-10-19T06:26:50 PM +0530"
+                }
+              },
+              "blue_hour": {
+                "morning": {
+                  "start": "2026-10-19T06:11:23 AM +0530",
+                  "end": "2026-10-19T06:19:50 AM +0530"
+                },
+                "evening": {
+                  "start": "2026-10-19T06:26:50 PM +0530",
+                  "end": "2026-10-19T06:35:16 PM +0530"
+                }
+              }
+            }
+          },
+          "moon": {
+            "moonrise": "2026-10-19T01:43:00 PM +0530",
+            "moonset": "2026-10-19T12:11:00 AM +0530",
+            "phase_value": 7.733444444444445,
+            "phase_description": "First Quarter"
+          },
+          "rahukaalam": {
+            "start": "2026-10-19T08:01:19 AM +0530",
+            "end": "2026-10-19T09:28:39 AM +0530"
+          },
+          "today": {
+            "day_progress_pct": 72,
+            "daylight_remaining_seconds": 11851,
+            "sunrise": "6:33 AM",
+            "sunset": "6:12 PM"
+          },
+          "tomorrow": {
+            "sunrise": "6:34 AM",
+            "sunset": "6:12 PM"
+          }
+        }
+      },
+      "TarotDraw": {
+        "summary": "One major arcana card.",
+        "value": {
+          "nhits": 1,
+          "cards": [
+            {
+              "type": "major",
+              "name_short": "ar01",
+              "name": "The Magician",
+              "value": "1",
+              "value_int": 1,
+              "meaning_up": "Skill, diplomacy, address, subtlety; sickness, pain, loss, disaster, snares of enemies; self-confidence, will; the Querent, if male.",
+              "meaning_rev": "Physician, Magus, mental disease, disgrace, disquiet.",
+              "desc": "A youthful figure in the robe of a magician, having the countenance of divine Apollo, with smile of confidence and shining eyes. Above his head is the mysterious sign of the Holy Spirit, the sign of life, like an endless cord, forming the figure 8 in a horizontal position . About his waist is a serpent-cincture, the serpent appearing to devour its own tail. This is familiar to most as a conventional symbol of eternity, but here it indicates more especially the eternity of attainment in the spirit. In the Magician's right hand is a wand raised towards heaven, while the left hand is pointing to the earth. This dual sign is known in very high grades of the Instituted Mysteries; it shews the descent of grace, virtue and light, drawn from things above and derived to things below. The suggestion throughout is therefore the possession and communication of the Powers and Gifts of the Spirit. On the table in front of the Magician are the symbols of the four Tarot suits, signifying the elements of natural life, which lie like counters before the adept, and he adapts them as he wills. Beneath are roses and lilies, the flos campi and lilium convallium, changed into garden flowers, to shew the culture of aspiration. This card signifies the divine motive in man, reflecting God, the will in the liberation of its union with that which is above. It is also the unity of individual being on all planes, and in a very high sense it is thought, in the fixation thereof. With further reference to what I have called the sign of life and its connexion with the number 8, it may be remembered that Christian Gnosticism speaks of rebirth in Christ as a change \"unto the Ogdoad.\" The mystic number is termed Jerusalem above, the Land flowing with Milk and Honey, the Holy Spirit and the Land of the Lord. According to Martinism, 8 is the number of Christ."
+            }
+          ]
+        }
+      },
+      "DailyHoroscope": {
+        "summary": "Illustrative daily reading.",
+        "value": {
+          "data": {
+            "date": "2026-10-19",
+            "period": "daily",
+            "sign": "Aries",
+            "horoscope": "Take time to plan your next steps."
+          }
+        }
+      },
+      "WeeklyHoroscope": {
+        "summary": "Illustrative weekly reading.",
+        "value": {
+          "data": {
+            "date": "2026-10-19",
+            "period": "weekly",
+            "sign": "Aries",
+            "horoscope": "Take time to plan your next steps."
+          }
+        }
+      },
+      "MonthlyHoroscope": {
+        "summary": "Illustrative monthly reading.",
+        "value": {
+          "data": {
+            "date": "2026-10",
+            "period": "monthly",
+            "sign": "Aries",
+            "horoscope": "Take time to plan your next steps."
+          }
+        }
+      }
+    }
+  }
+}

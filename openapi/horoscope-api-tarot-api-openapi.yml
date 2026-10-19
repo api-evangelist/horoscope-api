@@ -1,0 +1,326 @@
+openapi: 3.2.0
+info:
+  title: FreeHoroscope Tarot API
+  version: 1.1.0
+  description: Free public JSON APIs for horoscope readings, tarot cards, planetary positions, Panchang and Sun/Moon times. No API key or account is required. Public data routes support GET and OPTIONS with cross-origin access without credentials. Horoscope responses use a data wrapper; tarot responses use nhits and cards; calculation responses have no wrapper. This document covers the public data API, not account management. All references are included in this file. Commercial and non-commercial API use is allowed with attribution. Include a visible Powered by FreeHoroscopeAPI link to https://freehoroscopeapi.com in your application, website, or public documentation. Upstream requests have a total deadline of 10 seconds for horoscopes and 30 seconds for calculations, including the response body. Successful upstream data must match the response schema. Gateway errors include a stable code and a readable error message.
+  contact:
+    name: FreeHoroscopeAPI
+    url: https://freehoroscopeapi.com
+    email: admin@freehoroscopeapi.com
+  termsOfService: https://freehoroscopeapi.com/#usage-terms
+servers:
+- url: https://freehoroscopeapi.com
+  description: Production API
+security: []
+tags:
+- name: Tarot
+  description: The 78-card deck and random draws.
+paths:
+  /api/v1/tarot/cards:
+    get:
+      operationId: getTarotCards
+      summary: List all tarot cards
+      description: Returns all 78 cards. The response has nhits and cards at the top level, without a data wrapper. There is no include or timezone parameter. No query parameters are supported; card filtering is selected by the endpoint path.
+      tags:
+      - Tarot
+      parameters: []
+      responses:
+        '200':
+          description: Returns all 78 cards.
+          headers:
+            Access-Control-Allow-Origin:
+              $ref: '#/components/headers/AllowOrigin'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TarotResponse'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+    options:
+      operationId: getTarotCardsPreflight
+      summary: Check browser access
+      tags:
+      - Tarot
+      responses:
+        '204':
+          $ref: '#/components/responses/Preflight'
+  /api/v1/tarot/cards/major:
+    get:
+      operationId: getMajorArcana
+      summary: List major arcana cards
+      description: Returns the 22 major arcana cards. The response has nhits and cards at the top level, without a data wrapper. There is no include or timezone parameter. No query parameters are supported; card filtering is selected by the endpoint path.
+      tags:
+      - Tarot
+      parameters: []
+      responses:
+        '200':
+          description: Returns the 22 major arcana cards.
+          headers:
+            Access-Control-Allow-Origin:
+              $ref: '#/components/headers/AllowOrigin'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TarotResponse'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+    options:
+      operationId: getMajorArcanaPreflight
+      summary: Check browser access
+      tags:
+      - Tarot
+      responses:
+        '204':
+          $ref: '#/components/responses/Preflight'
+  /api/v1/tarot/cards/minor:
+    get:
+      operationId: getMinorArcana
+      summary: List minor arcana cards
+      description: Returns the 56 minor arcana cards. The response has nhits and cards at the top level, without a data wrapper. There is no include or timezone parameter. No query parameters are supported; card filtering is selected by the endpoint path.
+      tags:
+      - Tarot
+      parameters: []
+      responses:
+        '200':
+          description: Returns the 56 minor arcana cards.
+          headers:
+            Access-Control-Allow-Origin:
+              $ref: '#/components/headers/AllowOrigin'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TarotResponse'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+    options:
+      operationId: getMinorArcanaPreflight
+      summary: Check browser access
+      tags:
+      - Tarot
+      responses:
+        '204':
+          $ref: '#/components/responses/Preflight'
+  /api/v1/tarot/cards/random:
+    get:
+      operationId: drawTarotCards
+      summary: Draw random tarot cards
+      description: Draws distinct random cards. The default pool is the 22 major arcana cards; use minor=true for all 78. Requests above the pool size return the complete pool. The response has nhits and cards at the top level, without a data wrapper. There is no include or timezone parameter.
+      tags:
+      - Tarot
+      parameters:
+      - $ref: '#/components/parameters/CardCount'
+      - $ref: '#/components/parameters/IncludeMinor'
+      responses:
+        '200':
+          description: Draws distinct random cards. The default pool is the 22 major arcana cards; use minor=true for all 78. Requests above the pool size return the complete pool.
+          headers:
+            Access-Control-Allow-Origin:
+              $ref: '#/components/headers/AllowOrigin'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TarotResponse'
+              examples:
+                TarotDraw:
+                  $ref: '#/components/examples/TarotDraw'
+        '400':
+          description: n must be a positive integer.
+          headers:
+            Access-Control-Allow-Origin:
+              $ref: '#/components/headers/AllowOrigin'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Parameter n must be a positive integer
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+    options:
+      operationId: drawTarotCardsPreflight
+      summary: Check browser access
+      tags:
+      - Tarot
+      responses:
+        '204':
+          $ref: '#/components/responses/Preflight'
+components:
+  parameters:
+    IncludeMinor:
+      name: minor
+      in: query
+      description: Choose the random draw pool. The exact lowercase value true includes all 78 cards. false or an omitted parameter uses the 22 major arcana cards. The current API also treats other strings, including True and 1, as false; use true or false for portable requests.
+      required: false
+      schema:
+        type: boolean
+        default: false
+        x-enumDescriptions:
+          'false': Draw from the 22 major arcana cards.
+          'true': Draw from the full deck of 78 cards.
+      example: false
+    CardCount:
+      name: n
+      in: query
+      description: 'Requested number of distinct cards, as a positive base-10 integer. Default: 1. The response count is capped at the pool size: 22 when minor is false, or 78 when minor is true. For example, n=100 returns the complete selected pool. Zero, negative values and non-numeric values return HTTP 400. There is no pagination.'
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+      example: 3
+  headers:
+    AllowHeaders:
+      description: Allowed preflight request headers.
+      schema:
+        type: string
+        enum:
+        - Accept, Content-Type
+    AllowOrigin:
+      description: Public data can be read by any origin without credentials.
+      schema:
+        type: string
+        enum:
+        - '*'
+    AllowMethods:
+      description: Supported public data methods.
+      schema:
+        type: string
+        enum:
+        - GET, OPTIONS
+    NoStore:
+      description: Error responses must not be cached.
+      schema:
+        type: string
+        enum:
+        - no-store
+    Allow:
+      description: Supported methods.
+      schema:
+        type: string
+        enum:
+        - GET, OPTIONS
+  schemas:
+    TarotCard:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+          - major
+          - minor
+          description: 'Arcana group: major or minor.'
+        name:
+          type: string
+          description: Full card name.
+          example: The Fool
+        name_short:
+          type: string
+          description: Short card identifier, for example ar00.
+          example: ar00
+        value:
+          type: string
+          description: Card rank as a string.
+        value_int:
+          type: integer
+          description: Card rank as an integer.
+        meaning_up:
+          type: string
+          description: Upright meaning.
+        meaning_rev:
+          type: string
+          description: Reversed meaning.
+        desc:
+          type: string
+          description: Description of the card and its imagery.
+        suit:
+          type: string
+          enum:
+          - wands
+          - cups
+          - swords
+          - pentacles
+          description: Present for minor arcana cards.
+      required:
+      - type
+      - name
+      - name_short
+      - value
+      - value_int
+      - meaning_up
+      - meaning_rev
+      - desc
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message.
+          minLength: 1
+          pattern: \S
+        code:
+          type: string
+          description: 'Stable code for errors generated by this API: missing_sign, invalid_sign, invalid_count, method_not_allowed, upstream_unavailable, invalid_upstream_response, upstream_timeout or service_not_configured. Errors passed through from the calculation service can omit code or use a service-specific code such as invalid_parameter.'
+      required:
+      - error
+    TarotResponse:
+      type: object
+      properties:
+        nhits:
+          type: integer
+          minimum: 1
+          maximum: 78
+          description: Number of cards returned. This equals the length of cards.
+        cards:
+          type: array
+          items:
+            $ref: '#/components/schemas/TarotCard'
+          minItems: 1
+          maxItems: 78
+          description: Returned tarot cards. List endpoints return the selected complete deck. The random endpoint returns distinct cards from its selected pool.
+      required:
+      - nhits
+      - cards
+      description: nhits and cards are top-level fields. There is no data wrapper.
+  responses:
+    MethodNotAllowed:
+      description: This endpoint supports GET and OPTIONS only.
+      headers:
+        Access-Control-Allow-Origin:
+          $ref: '#/components/headers/AllowOrigin'
+        Allow:
+          $ref: '#/components/headers/Allow'
+        Cache-Control:
+          $ref: '#/components/headers/NoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: Method not allowed. Use GET or OPTIONS.
+            code: method_not_allowed
+    Preflight:
+      description: Browser preflight accepted. No response body. Parameters are not validated and no upstream request is made.
+      headers:
+        Access-Control-Allow-Origin:
+          $ref: '#/components/headers/AllowOrigin'
+        Access-Control-Allow-Methods:
+          $ref: '#/components/headers/AllowMethods'
+        Access-Control-Allow-Headers:
+          $ref: '#/components/headers/AllowHeaders'
+  examples:
+    TarotDraw:
+      summary: One major arcana card.
+      value:
+        nhits: 1
+        cards:
+        - type: major
+          name_short: ar01
+          name: The Magician
+          value: '1'
+          value_int: 1
+          meaning_up: Skill, diplomacy, address, subtlety; sickness, pain, loss, disaster, snares of enemies; self-confidence, will; the Querent, if male.
+          meaning_rev: Physician, Magus, mental disease, disgrace, disquiet.
+          desc: A youthful figure in the robe of a magician, having the countenance of divine Apollo, with smile of confidence and shining eyes. Above his head is the mysterious sign of the Holy Spirit, the sign of life, like an endless cord, forming the figure 8 in a horizontal position . About his waist is a serpent-cincture, the serpent appearing to devour its own tail. This is familiar to most as a conventional symbol of eternity, but here it indicates more especially the eternity of attainment in the spirit. In the Magician's right hand is a wand raised towards heaven, while the left hand is pointing to the earth. This dual sign is known in very high grades of the Instituted Mysteries; it shews the descent of grace, virtue and light, drawn from things above and derived to things below. The suggestion throughout is therefore the possession and communication of the Powers and Gifts of the Spirit. On the table in front of the Magician are the symbols of the four Tarot suits, signifying the elements of natural life, which lie like counters before the adept, and he adapts them as he wills. Beneath are roses and lilies, the flos campi and lilium convallium, changed into garden flowers, to shew the culture of aspiration. This card signifies the divine motive in man, reflecting God, the will in the liberation of its union with that which is above. It is also the unity of individual being on all planes, and in a very high sense it is thought, in the fixation thereof. With further reference to what I have called the sign of life and its connexion with the number 8, it may be remembered that Christian Gnosticism speaks of rebirth in Christ as a change "unto the Ogdoad." The mystic number is termed Jerusalem above, the Land flowing with Milk and Honey, the Holy Spirit and the Land of the Lord. According to Martinism, 8 is the number of Christ.
+externalDocs:
+  description: Interactive API explorer
+  url: https://freehoroscopeapi.com/explorer

@@ -1,0 +1,386 @@
+openapi: 3.2.0
+info:
+  title: FreeHoroscope Horoscopes API
+  version: 1.1.0
+  description: Free public JSON APIs for horoscope readings, tarot cards, planetary positions, Panchang and Sun/Moon times. No API key or account is required. Public data routes support GET and OPTIONS with cross-origin access without credentials. Horoscope responses use a data wrapper; tarot responses use nhits and cards; calculation responses have no wrapper. This document covers the public data API, not account management. All references are included in this file. Commercial and non-commercial API use is allowed with attribution. Include a visible Powered by FreeHoroscopeAPI link to https://freehoroscopeapi.com in your application, website, or public documentation. Upstream requests have a total deadline of 10 seconds for horoscopes and 30 seconds for calculations, including the response body. Successful upstream data must match the response schema. Gateway errors include a stable code and a readable error message.
+  contact:
+    name: FreeHoroscopeAPI
+    url: https://freehoroscopeapi.com
+    email: admin@freehoroscopeapi.com
+  termsOfService: https://freehoroscopeapi.com/#usage-terms
+servers:
+- url: https://freehoroscopeapi.com
+  description: Production API
+security: []
+tags:
+- name: Horoscopes
+  description: Written daily, weekly and monthly readings.
+paths:
+  /api/v1/get-horoscope/daily:
+    get:
+      operationId: getDailyHoroscope
+      summary: Get a daily horoscope
+      description: Returns the current daily reading for one zodiac sign inside a data object. The only supported query parameter is sign; there is no date or day selector. Upstream responses are checked for required fields, a non-empty reading, a valid calendar date (or YYYY-MM for monthly readings), and a sign and period that match the request. The date is the provider's reading label; this validation does not guarantee freshness. The total upstream deadline is 10 seconds. No include or timezone parameter is supported. The response contains no timezone field.
+      tags:
+      - Horoscopes
+      parameters:
+      - $ref: '#/components/parameters/Sign'
+      responses:
+        '200':
+          description: Current daily reading.
+          headers:
+            Access-Control-Allow-Origin:
+              $ref: '#/components/headers/AllowOrigin'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HoroscopeResponse'
+              examples:
+                DailyHoroscope:
+                  $ref: '#/components/examples/DailyHoroscope'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '502':
+          $ref: '#/components/responses/BadGateway'
+        '504':
+          $ref: '#/components/responses/GatewayTimeout'
+    options:
+      operationId: getDailyHoroscopePreflight
+      summary: Check browser access
+      tags:
+      - Horoscopes
+      responses:
+        '204':
+          $ref: '#/components/responses/Preflight'
+  /api/v1/get-horoscope/weekly:
+    get:
+      operationId: getWeeklyHoroscope
+      summary: Get a weekly horoscope
+      description: Returns the current weekly reading for one zodiac sign inside a data object. The only supported query parameter is sign; there is no date or day selector. Upstream responses are checked for required fields, a non-empty reading, a valid calendar date (or YYYY-MM for monthly readings), and a sign and period that match the request. The date is the provider's reading label; this validation does not guarantee freshness. The total upstream deadline is 10 seconds. No include or timezone parameter is supported. The response contains no timezone field.
+      tags:
+      - Horoscopes
+      parameters:
+      - $ref: '#/components/parameters/Sign'
+      responses:
+        '200':
+          description: Current weekly reading.
+          headers:
+            Access-Control-Allow-Origin:
+              $ref: '#/components/headers/AllowOrigin'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HoroscopeResponse'
+              examples:
+                WeeklyHoroscope:
+                  $ref: '#/components/examples/WeeklyHoroscope'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '502':
+          $ref: '#/components/responses/BadGateway'
+        '504':
+          $ref: '#/components/responses/GatewayTimeout'
+    options:
+      operationId: getWeeklyHoroscopePreflight
+      summary: Check browser access
+      tags:
+      - Horoscopes
+      responses:
+        '204':
+          $ref: '#/components/responses/Preflight'
+  /api/v1/get-horoscope/monthly:
+    get:
+      operationId: getMonthlyHoroscope
+      summary: Get a monthly horoscope
+      description: Returns the current monthly reading for one zodiac sign inside a data object. The only supported query parameter is sign; there is no date or day selector. Upstream responses are checked for required fields, a non-empty reading, a valid calendar date (or YYYY-MM for monthly readings), and a sign and period that match the request. The date is the provider's reading label; this validation does not guarantee freshness. The total upstream deadline is 10 seconds. No include or timezone parameter is supported. The response contains no timezone field.
+      tags:
+      - Horoscopes
+      parameters:
+      - $ref: '#/components/parameters/Sign'
+      responses:
+        '200':
+          description: Current monthly reading.
+          headers:
+            Access-Control-Allow-Origin:
+              $ref: '#/components/headers/AllowOrigin'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HoroscopeResponse'
+              examples:
+                MonthlyHoroscope:
+                  $ref: '#/components/examples/MonthlyHoroscope'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '502':
+          $ref: '#/components/responses/BadGateway'
+        '504':
+          $ref: '#/components/responses/GatewayTimeout'
+    options:
+      operationId: getMonthlyHoroscopePreflight
+      summary: Check browser access
+      tags:
+      - Horoscopes
+      responses:
+        '204':
+          $ref: '#/components/responses/Preflight'
+components:
+  schemas:
+    GatewayError:
+      allOf:
+      - $ref: '#/components/schemas/Error'
+      - type: object
+        required:
+        - code
+        properties:
+          code:
+            type: string
+            enum:
+            - upstream_unavailable
+            - invalid_upstream_response
+            - upstream_timeout
+    Horoscope:
+      type: object
+      properties:
+        date:
+          type: string
+          description: Reading date or period label. Daily and weekly readings use YYYY-MM-DD; monthly readings use YYYY-MM. Do not assume every value is a full date.
+          example: 2026-10
+        period:
+          type: string
+          enum:
+          - daily
+          - weekly
+          - monthly
+          description: 'The requested reading period: daily, weekly or monthly.'
+        sign:
+          type: string
+          description: The requested zodiac sign. Case-insensitive when checked against the request.
+          example: Aries
+          minLength: 1
+        horoscope:
+          type: string
+          description: Written reading returned by the horoscope provider.
+          minLength: 1
+          pattern: \S
+      required:
+      - date
+      - period
+      - sign
+      - horoscope
+      oneOf:
+      - properties:
+          period:
+            type: string
+            enum:
+            - monthly
+          date:
+            type: string
+            pattern: ^[0-9]{4}-(0[1-9]|1[0-2])$
+      - properties:
+          period:
+            type: string
+            enum:
+            - daily
+            - weekly
+          date:
+            type: string
+            format: date
+            pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}$
+    HoroscopeResponse:
+      type: object
+      properties:
+        data:
+          description: The horoscope reading for the requested sign and period.
+          allOf:
+          - $ref: '#/components/schemas/Horoscope'
+      required:
+      - data
+      description: A data object wraps the horoscope reading.
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message.
+          minLength: 1
+          pattern: \S
+        code:
+          type: string
+          description: 'Stable code for errors generated by this API: missing_sign, invalid_sign, invalid_count, method_not_allowed, upstream_unavailable, invalid_upstream_response, upstream_timeout or service_not_configured. Errors passed through from the calculation service can omit code or use a service-specific code such as invalid_parameter.'
+      required:
+      - error
+  headers:
+    AllowHeaders:
+      description: Allowed preflight request headers.
+      schema:
+        type: string
+        enum:
+        - Accept, Content-Type
+    AllowOrigin:
+      description: Public data can be read by any origin without credentials.
+      schema:
+        type: string
+        enum:
+        - '*'
+    AllowMethods:
+      description: Supported public data methods.
+      schema:
+        type: string
+        enum:
+        - GET, OPTIONS
+    NoStore:
+      description: Error responses must not be cached.
+      schema:
+        type: string
+        enum:
+        - no-store
+    Allow:
+      description: Supported methods.
+      schema:
+        type: string
+        enum:
+        - GET, OPTIONS
+  examples:
+    DailyHoroscope:
+      summary: Illustrative daily reading.
+      value:
+        data:
+          date: '2026-10-19'
+          period: daily
+          sign: Aries
+          horoscope: Take time to plan your next steps.
+    WeeklyHoroscope:
+      summary: Illustrative weekly reading.
+      value:
+        data:
+          date: '2026-10-19'
+          period: weekly
+          sign: Aries
+          horoscope: Take time to plan your next steps.
+    MonthlyHoroscope:
+      summary: Illustrative monthly reading.
+      value:
+        data:
+          date: 2026-10
+          period: monthly
+          sign: Aries
+          horoscope: Take time to plan your next steps.
+  responses:
+    MethodNotAllowed:
+      description: This endpoint supports GET and OPTIONS only.
+      headers:
+        Access-Control-Allow-Origin:
+          $ref: '#/components/headers/AllowOrigin'
+        Allow:
+          $ref: '#/components/headers/Allow'
+        Cache-Control:
+          $ref: '#/components/headers/NoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: Method not allowed. Use GET or OPTIONS.
+            code: method_not_allowed
+    Preflight:
+      description: Browser preflight accepted. No response body. Parameters are not validated and no upstream request is made.
+      headers:
+        Access-Control-Allow-Origin:
+          $ref: '#/components/headers/AllowOrigin'
+        Access-Control-Allow-Methods:
+          $ref: '#/components/headers/AllowMethods'
+        Access-Control-Allow-Headers:
+          $ref: '#/components/headers/AllowHeaders'
+    BadGateway:
+      description: The upstream request failed, returned an unexpected HTTP status, or returned invalid data. Responses must use a JSON content type and must not exceed 1 MiB. Successful data must match the documented schema. Horoscope signs and periods must also match the request. No partial data is returned.
+      headers:
+        Access-Control-Allow-Origin:
+          $ref: '#/components/headers/AllowOrigin'
+        Cache-Control:
+          $ref: '#/components/headers/NoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GatewayError'
+          examples:
+            Unavailable:
+              value:
+                error: The upstream service is unavailable. Try again later.
+                code: upstream_unavailable
+            InvalidResponse:
+              value:
+                error: The upstream service returned invalid data. Try again later.
+                code: invalid_upstream_response
+    BadRequest:
+      description: Missing or invalid query parameters.
+      headers:
+        Access-Control-Allow-Origin:
+          $ref: '#/components/headers/AllowOrigin'
+        Cache-Control:
+          $ref: '#/components/headers/NoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            MissingSign:
+              value:
+                error: 'Missing required query parameter: sign. Use a zodiac sign such as aries.'
+                code: missing_sign
+            InvalidSign:
+              value:
+                error: 'Invalid sign. Use one of: aries, taurus, gemini, cancer, leo, virgo, libra, scorpio, sagittarius, capricorn, aquarius, pisces.'
+                code: invalid_sign
+            InvalidCount:
+              value:
+                error: Parameter n must be a positive integer, such as 1 or 3.
+                code: invalid_count
+            CalculationParameter:
+              value:
+                error: lat and lng are required
+    GatewayTimeout:
+      description: 'The upstream service exceeded the total request and body deadline: 10 seconds for horoscopes or 30 seconds for calculations. Retry later with a limited number of attempts and increasing delays.'
+      headers:
+        Access-Control-Allow-Origin:
+          $ref: '#/components/headers/AllowOrigin'
+        Cache-Control:
+          $ref: '#/components/headers/NoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GatewayError'
+          example:
+            error: The upstream service took too long to respond. Try again later.
+            code: upstream_timeout
+  parameters:
+    Sign:
+      name: sign
+      in: query
+      description: Zodiac sign for the reading. Allowed values are listed below. Values are case-insensitive; for example, aries and Aries select the same sign. There is no default.
+      required: true
+      schema:
+        type: string
+        enum:
+        - aries
+        - taurus
+        - gemini
+        - cancer
+        - leo
+        - virgo
+        - libra
+        - scorpio
+        - sagittarius
+        - capricorn
+        - aquarius
+        - pisces
+      example: aries
+externalDocs:
+  description: Interactive API explorer
+  url: https://freehoroscopeapi.com/explorer

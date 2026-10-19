@@ -1,0 +1,1254 @@
+openapi: 3.2.0
+info:
+  title: FreeHoroscope Calendar API
+  version: 1.1.0
+  description: Free public JSON APIs for horoscope readings, tarot cards, planetary positions, Panchang and Sun/Moon times. No API key or account is required. Public data routes support GET and OPTIONS with cross-origin access without credentials. Horoscope responses use a data wrapper; tarot responses use nhits and cards; calculation responses have no wrapper. This document covers the public data API, not account management. All references are included in this file. Commercial and non-commercial API use is allowed with attribution. Include a visible Powered by FreeHoroscopeAPI link to https://freehoroscopeapi.com in your application, website, or public documentation. Upstream requests have a total deadline of 10 seconds for horoscopes and 30 seconds for calculations, including the response body. Successful upstream data must match the response schema. Gateway errors include a stable code and a readable error message.
+  contact:
+    name: FreeHoroscopeAPI
+    url: https://freehoroscopeapi.com
+    email: admin@freehoroscopeapi.com
+  termsOfService: https://freehoroscopeapi.com/#usage-terms
+servers:
+- url: https://freehoroscopeapi.com
+  description: Production API
+security: []
+tags:
+- name: Calendar
+  description: Location-based daily calendar and Sun/Moon data.
+paths:
+  /api/v1/panchang:
+    get:
+      operationId: getPanchang
+      summary: Get daily Panchang
+      description: Requires lat and one of lng, lon or long. The date defaults to local today. The window runs from sunrise to the next sunrise, with a labeled civil-day fallback if sunrise is unavailable. The entire calculation window must fall within 1900-01-01T00:00:00Z inclusive to 2053-01-01T00:00:00Z exclusive. Returns astronomical limbs using an approximate Lahiri model; festival and regional observance rules are not included. No data wrapper. The complete upstream body is checked against the response schema before it is returned. The total upstream deadline is 30 seconds. The timezone is derived from the coordinates and returned in the response; a timezone query parameter cannot override it. This endpoint has no include or timeformat parameter. Window and transition timestamps always use ISO-8601 with local UTC offsets.
+      tags:
+      - Calendar
+      parameters:
+      - $ref: '#/components/parameters/RequiredLatitude'
+      - $ref: '#/components/parameters/Longitude'
+      - $ref: '#/components/parameters/LongitudeAlias'
+      - $ref: '#/components/parameters/LongAlias'
+      - $ref: '#/components/parameters/Date'
+      responses:
+        '200':
+          description: Local day, calculation window and Panchang transitions.
+          headers:
+            Access-Control-Allow-Origin:
+              $ref: '#/components/headers/AllowOrigin'
+            Server-Timing:
+              $ref: '#/components/headers/ServerTiming'
+            Access-Control-Expose-Headers:
+              $ref: '#/components/headers/ExposeHeaders'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Panchang'
+              examples:
+                MumbaiPanchang:
+                  $ref: '#/components/examples/MumbaiPanchang'
+        '400':
+          description: Invalid coordinate, date, datetime, include option or calculation range.
+          headers:
+            Access-Control-Allow-Origin:
+              $ref: '#/components/headers/AllowOrigin'
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CalculationError'
+              example:
+                error: lat must be between -90 and 90
+        '405':
+          $ref: '#/components/responses/CalculationMethodNotAllowed'
+        '502':
+          $ref: '#/components/responses/CalculationBadGateway'
+        '503':
+          $ref: '#/components/responses/CalculationServiceUnavailable'
+        '504':
+          $ref: '#/components/responses/CalculationGatewayTimeout'
+        default:
+          description: A structured JSON error from the calculation service is passed through with its HTTP status and body. It contains an error string or a validation detail array. Errors are not cached. Malformed or non-JSON errors are replaced with HTTP 502.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+            Access-Control-Allow-Origin:
+              $ref: '#/components/headers/AllowOrigin'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CalculationError'
+    options:
+      operationId: getPanchangPreflight
+      summary: Check browser access
+      tags:
+      - Calendar
+      responses:
+        '204':
+          $ref: '#/components/responses/Preflight'
+  /api/v1/times:
+    get:
+      operationId: getSunMoonTimes
+      summary: Get Sun, Moon and Rahu Kaal times
+      description: Requires lat and one of lng, lon or long. Defaults to local today and 12-hour event strings. Set timeformat=24 for ISO-8601 event timestamps. With no date parameter, available today/tomorrow summaries are also included. Events can be null at polar locations, and Rahu Kaal can be absent. include=moon_details adds a separate local-noon calculation. No data wrapper. The complete upstream body is checked against the response schema before it is returned. The total upstream deadline is 30 seconds. The timezone is derived from the coordinates and returned in the response; a timezone query parameter cannot override it.
+      tags:
+      - Calendar
+      parameters:
+      - $ref: '#/components/parameters/RequiredLatitude'
+      - $ref: '#/components/parameters/Longitude'
+      - $ref: '#/components/parameters/LongitudeAlias'
+      - $ref: '#/components/parameters/LongAlias'
+      - $ref: '#/components/parameters/Date'
+      - $ref: '#/components/parameters/TimeFormat'
+      - $ref: '#/components/parameters/MoonDetails'
+      responses:
+        '200':
+          description: Local Sun and Moon events, with optional periods and summaries.
+          headers:
+            Access-Control-Allow-Origin:
+              $ref: '#/components/headers/AllowOrigin'
+            Server-Timing:
+              $ref: '#/components/headers/ServerTiming'
+            Access-Control-Expose-Headers:
+              $ref: '#/components/headers/ExposeHeaders'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Times'
+              examples:
+                MumbaiTimes:
+                  $ref: '#/components/examples/MumbaiTimes'
+                PolarTimes:
+                  $ref: '#/components/examples/PolarTimes'
+                CurrentTimes:
+                  $ref: '#/components/examples/CurrentTimes'
+        '400':
+          description: Invalid coordinate, date, datetime, include option or calculation range.
+          headers:
+            Access-Control-Allow-Origin:
+              $ref: '#/components/headers/AllowOrigin'
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CalculationError'
+              example:
+                error: lat must be between -90 and 90
+        '405':
+          $ref: '#/components/responses/CalculationMethodNotAllowed'
+        '422':
+          $ref: '#/components/responses/CalculationValidationFailed'
+        '502':
+          $ref: '#/components/responses/CalculationBadGateway'
+        '503':
+          $ref: '#/components/responses/CalculationServiceUnavailable'
+        '504':
+          $ref: '#/components/responses/CalculationGatewayTimeout'
+        default:
+          description: A structured JSON error from the calculation service is passed through with its HTTP status and body. It contains an error string or a validation detail array. Errors are not cached. Malformed or non-JSON errors are replaced with HTTP 502.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+            Access-Control-Allow-Origin:
+              $ref: '#/components/headers/AllowOrigin'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CalculationError'
+    options:
+      operationId: getSunMoonTimesPreflight
+      summary: Check browser access
+      tags:
+      - Calendar
+      responses:
+        '204':
+          $ref: '#/components/responses/Preflight'
+components:
+  responses:
+    CalculationServiceUnavailable:
+      description: The calculation service is unavailable or not configured. A valid structured error returned by the calculation service with this status is passed through unchanged.
+      headers:
+        Access-Control-Allow-Origin:
+          $ref: '#/components/headers/AllowOrigin'
+        Cache-Control:
+          $ref: '#/components/headers/NoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CalculationError'
+          example:
+            error: The calculation service is not configured. Contact support.
+            code: service_not_configured
+    Preflight:
+      description: Browser preflight accepted. No response body. Parameters are not validated and no upstream request is made.
+      headers:
+        Access-Control-Allow-Origin:
+          $ref: '#/components/headers/AllowOrigin'
+        Access-Control-Allow-Methods:
+          $ref: '#/components/headers/AllowMethods'
+        Access-Control-Allow-Headers:
+          $ref: '#/components/headers/AllowHeaders'
+    CalculationValidationFailed:
+      description: The calculation service could not parse a parameter, such as a non-numeric coordinate. A valid structured error returned by the calculation service with this status is passed through unchanged.
+      headers:
+        Access-Control-Allow-Origin:
+          $ref: '#/components/headers/AllowOrigin'
+        Cache-Control:
+          $ref: '#/components/headers/NoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CalculationError'
+          example:
+            detail:
+            - type: float_parsing
+              loc:
+              - query
+              - lat
+              msg: Input should be a valid number
+              input: invalid
+    CalculationGatewayTimeout:
+      description: 'The upstream service exceeded the total request and body deadline: 10 seconds for horoscopes or 30 seconds for calculations. Retry later with a limited number of attempts and increasing delays. A valid structured error returned by the calculation service with this status is passed through unchanged.'
+      headers:
+        Access-Control-Allow-Origin:
+          $ref: '#/components/headers/AllowOrigin'
+        Cache-Control:
+          $ref: '#/components/headers/NoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CalculationError'
+          example:
+            error: The upstream service took too long to respond. Try again later.
+            code: upstream_timeout
+    CalculationMethodNotAllowed:
+      description: This endpoint supports GET and OPTIONS only. A valid structured error returned by the calculation service with this status is passed through unchanged.
+      headers:
+        Access-Control-Allow-Origin:
+          $ref: '#/components/headers/AllowOrigin'
+        Allow:
+          $ref: '#/components/headers/Allow'
+        Cache-Control:
+          $ref: '#/components/headers/NoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CalculationError'
+          example:
+            error: Method not allowed. Use GET or OPTIONS.
+            code: method_not_allowed
+    CalculationBadGateway:
+      description: The upstream request failed, returned an unexpected HTTP status, or returned invalid data. Responses must use a JSON content type and must not exceed 1 MiB. Successful data must match the documented schema. Horoscope signs and periods must also match the request. No partial data is returned. A valid structured error returned by the calculation service with this status is passed through unchanged.
+      headers:
+        Access-Control-Allow-Origin:
+          $ref: '#/components/headers/AllowOrigin'
+        Cache-Control:
+          $ref: '#/components/headers/NoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CalculationError'
+          examples:
+            Unavailable:
+              value:
+                error: The upstream service is unavailable. Try again later.
+                code: upstream_unavailable
+            InvalidResponse:
+              value:
+                error: The upstream service returned invalid data. Try again later.
+                code: invalid_upstream_response
+  schemas:
+    NakshatraValue:
+      type: object
+      properties:
+        number:
+          type: integer
+          minimum: 1
+          maximum: 27
+          description: Nakshatra index from 1 to 27.
+        name:
+          type: string
+          description: Name of the sidereal lunar mansion.
+      required:
+      - number
+      - name
+    YogaLimb:
+      type: object
+      properties:
+        at_start:
+          $ref: '#/components/schemas/YogaValue'
+        transitions:
+          type: array
+          items:
+            type: object
+            properties:
+              datetime:
+                type: string
+                format: date-time
+                description: Transition instant, in ISO-8601 with local UTC offset.
+              to:
+                $ref: '#/components/schemas/YogaValue'
+            required:
+            - datetime
+            - to
+          description: Transitions inside [window.start, window.end). An empty array means the value does not change in this window.
+      required:
+      - at_start
+      - transitions
+      description: Value at the start of the calculation window, followed by transitions in time order.
+    TithiValue:
+      type: object
+      properties:
+        number:
+          type: integer
+          minimum: 1
+          maximum: 30
+          description: Tithi number from 1 to 30.
+        name:
+          type: string
+          description: Tithi name, including Purnima or Amavasya at the end of each half.
+        paksha:
+          type: string
+          enum:
+          - Shukla
+          - Krishna
+          description: Shukla for the waxing half; Krishna for the waning half.
+      required:
+      - number
+      - name
+      - paksha
+    EventTime:
+      type:
+      - string
+      - 'null'
+      description: Event timestamp in the local timezone. timeformat=12 returns YYYY-MM-DDThh:mm:ss AM/PM ±HHMM; timeformat=24 returns ISO-8601 with an offset. Null when the event does not occur. The default 12-hour string is not RFC 3339.
+    Times:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+          description: Resolved local calendar date for the requested coordinates.
+          example: '2026-10-01'
+        location:
+          $ref: '#/components/schemas/Location'
+        timezone:
+          type: string
+          description: IANA timezone identifier derived from the coordinates, for example Asia/Kolkata, Europe/London or America/New_York. UTC is the fallback if no timezone is found. The value can be any timezone returned by the location database; it is not a fixed list. timezone is a response field, not a supported query parameter. Local dates and event offsets follow this timezone, including daylight saving time where applicable.
+          example: Asia/Kolkata
+          readOnly: true
+        sun:
+          $ref: '#/components/schemas/Sun'
+        moon:
+          $ref: '#/components/schemas/Moon'
+        rahukaalam:
+          $ref: '#/components/schemas/TimePeriod'
+        today:
+          $ref: '#/components/schemas/TodaySummary'
+        tomorrow:
+          $ref: '#/components/schemas/TomorrowSummary'
+      required:
+      - date
+      - location
+      - timezone
+      - sun
+      - moon
+      description: No data wrapper. Rahu Kaal and some periods can be absent where the needed Sun events do not occur.
+    Sun:
+      type: object
+      properties:
+        events:
+          $ref: '#/components/schemas/SunEvents'
+        daylight:
+          $ref: '#/components/schemas/Daylight'
+        twilight_periods:
+          type: object
+          properties:
+            civil:
+              $ref: '#/components/schemas/TwilightMorningEvening'
+            nautical:
+              $ref: '#/components/schemas/TwilightMorningEvening'
+            astronomical:
+              $ref: '#/components/schemas/TwilightMorningEvening'
+          required:
+          - civil
+          - nautical
+          - astronomical
+          description: Civil, nautical and astronomical twilight intervals, each with morning/evening bounds and a status.
+        twilight:
+          $ref: '#/components/schemas/MorningEvening'
+        photography:
+          type: object
+          properties:
+            golden_hour:
+              $ref: '#/components/schemas/MorningEvening'
+            blue_hour:
+              $ref: '#/components/schemas/MorningEvening'
+          description: Available golden_hour and blue_hour intervals. A period is omitted if its required crossings do not occur.
+      required:
+      - events
+      - daylight
+      - twilight_periods
+      description: Sun events, daylight duration and available twilight and photography periods.
+    Panchang:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+          description: Resolved local calendar date.
+        location:
+          $ref: '#/components/schemas/Location'
+        timezone:
+          type: string
+          description: IANA timezone identifier derived from the coordinates, for example Asia/Kolkata, Europe/London or America/New_York. UTC is the fallback if no timezone is found. The value can be any timezone returned by the location database; it is not a fixed list. timezone is a response field, not a supported query parameter. Local dates and event offsets follow this timezone, including daylight saving time where applicable.
+          example: Asia/Kolkata
+          readOnly: true
+        window:
+          $ref: '#/components/schemas/CalendarWindow'
+        day_basis:
+          type: string
+          enum:
+          - sunrise_to_next_sunrise
+          - civil_day_fallback_no_sunrise
+          description: sunrise_to_next_sunrise uses consecutive local sunrises. civil_day_fallback_no_sunrise uses local midnight to midnight when sunrise is unavailable.
+        weekday:
+          type: string
+          description: English weekday name for the requested local date.
+          example: Thursday
+        tithi:
+          $ref: '#/components/schemas/TithiLimb'
+        nakshatra:
+          $ref: '#/components/schemas/NakshatraLimb'
+        yoga:
+          $ref: '#/components/schemas/YogaLimb'
+        karana:
+          $ref: '#/components/schemas/KaranaLimb'
+        conventions:
+          type: object
+          additionalProperties:
+            type: string
+          description: Calculation conventions for ayanamsa, positions, tithi, nakshatra, yoga, karana and scope.
+      required:
+      - date
+      - location
+      - timezone
+      - window
+      - day_basis
+      - weekday
+      - tithi
+      - nakshatra
+      - yoga
+      - karana
+      - conventions
+      description: Daily astronomical Panchang, with each limb evaluated at the window start and all transitions inside the window. There is no data wrapper.
+    TithiLimb:
+      type: object
+      properties:
+        at_start:
+          $ref: '#/components/schemas/TithiValue'
+        transitions:
+          type: array
+          items:
+            type: object
+            properties:
+              datetime:
+                type: string
+                format: date-time
+                description: Transition instant, in ISO-8601 with local UTC offset.
+              to:
+                $ref: '#/components/schemas/TithiValue'
+            required:
+            - datetime
+            - to
+          description: Transitions inside [window.start, window.end). An empty array means the value does not change in this window.
+      required:
+      - at_start
+      - transitions
+      description: Value at the start of the calculation window, followed by transitions in time order.
+    KaranaLimb:
+      type: object
+      properties:
+        at_start:
+          $ref: '#/components/schemas/KaranaValue'
+        transitions:
+          type: array
+          items:
+            type: object
+            properties:
+              datetime:
+                type: string
+                format: date-time
+                description: Transition instant, in ISO-8601 with local UTC offset.
+              to:
+                $ref: '#/components/schemas/KaranaValue'
+            required:
+            - datetime
+            - to
+          description: Transitions inside [window.start, window.end). An empty array means the value does not change in this window.
+      required:
+      - at_start
+      - transitions
+      description: Value at the start of the calculation window, followed by transitions in time order.
+    Moon:
+      type: object
+      properties:
+        moonrise:
+          $ref: '#/components/schemas/EventTime'
+        moonset:
+          $ref: '#/components/schemas/EventTime'
+        phase_value:
+          type: number
+          description: Astral phase value, approximately 0 to 28; not illumination percent.
+        phase_description:
+          type: string
+          description: Readable Moon phase name associated with phase_value.
+          example: Waxing Gibbous
+        error:
+          type: string
+          description: Calculation message when one or more Moon events are unavailable. Independently available fields remain present.
+        details:
+          $ref: '#/components/schemas/MoonDetails'
+      required:
+      - moonrise
+      - moonset
+      - phase_value
+      - phase_description
+      description: Moonrise, moonset and approximate phase, with optional precise Moon details.
+    NakshatraLimb:
+      type: object
+      properties:
+        at_start:
+          $ref: '#/components/schemas/NakshatraValue'
+        transitions:
+          type: array
+          items:
+            type: object
+            properties:
+              datetime:
+                type: string
+                format: date-time
+                description: Transition instant, in ISO-8601 with local UTC offset.
+              to:
+                $ref: '#/components/schemas/NakshatraValue'
+            required:
+            - datetime
+            - to
+          description: Transitions inside [window.start, window.end). An empty array means the value does not change in this window.
+      required:
+      - at_start
+      - transitions
+      description: Value at the start of the calculation window, followed by transitions in time order.
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message.
+          minLength: 1
+          pattern: \S
+        code:
+          type: string
+          description: 'Stable code for errors generated by this API: missing_sign, invalid_sign, invalid_count, method_not_allowed, upstream_unavailable, invalid_upstream_response, upstream_timeout or service_not_configured. Errors passed through from the calculation service can omit code or use a service-specific code such as invalid_parameter.'
+      required:
+      - error
+    TodaySummary:
+      type: object
+      properties:
+        day_progress_pct:
+          type:
+          - integer
+          - 'null'
+          minimum: 0
+          maximum: 100
+          description: Rounded percentage of the sunrise-to-sunset interval already elapsed, clamped to 0–100. Null when the required events are unavailable.
+        daylight_remaining_seconds:
+          type:
+          - integer
+          - 'null'
+          minimum: 0
+          description: Daylight remaining from the request time until the end of the local day, in seconds. Null when unavailable.
+        sunrise:
+          type:
+          - string
+          - 'null'
+          description: 'Short local clock time: h:mm AM/PM for timeformat=12, or HH:mm for timeformat=24. No date or UTC offset is included. Null when the event is unavailable.'
+          example: 06:30
+        sunset:
+          type:
+          - string
+          - 'null'
+          description: 'Short local clock time: h:mm AM/PM for timeformat=12, or HH:mm for timeformat=24. No date or UTC offset is included. Null when the event is unavailable.'
+          example: 06:30
+      required:
+      - day_progress_pct
+      - daylight_remaining_seconds
+      - sunrise
+      - sunset
+      description: Present when date is omitted and the summary is available. Sunrise and sunset use short clock times.
+    TimePeriod:
+      type: object
+      properties:
+        start:
+          $ref: '#/components/schemas/EventTime'
+        end:
+          $ref: '#/components/schemas/EventTime'
+      required:
+      - start
+      - end
+    TwilightMorningEvening:
+      type: object
+      properties:
+        morning:
+          $ref: '#/components/schemas/TwilightPeriod'
+        evening:
+          $ref: '#/components/schemas/TwilightPeriod'
+      required:
+      - morning
+      - evening
+    Location:
+      type: object
+      properties:
+        lat:
+          type: number
+          minimum: -90
+          maximum: 90
+          description: Latitude in degrees north of the equator; negative values are south.
+        lon:
+          type: number
+          minimum: -180
+          maximum: 180
+          description: Longitude in degrees east of Greenwich; negative values are west. The response always uses lon, regardless of the request alias.
+      required:
+      - lat
+      - lon
+      description: Responses use lon even when the request uses lng or long.
+    SunEvents:
+      type: object
+      properties:
+        dawn:
+          $ref: '#/components/schemas/EventTime'
+        sunrise:
+          $ref: '#/components/schemas/EventTime'
+        noon:
+          $ref: '#/components/schemas/EventTime'
+        sunset:
+          $ref: '#/components/schemas/EventTime'
+        dusk:
+          $ref: '#/components/schemas/EventTime'
+        error:
+          type: string
+          description: Present when some events are unavailable.
+      required:
+      - dawn
+      - sunrise
+      - noon
+      - sunset
+      - dusk
+    TomorrowSummary:
+      type: object
+      properties:
+        sunrise:
+          type:
+          - string
+          - 'null'
+          description: 'Short local clock time: h:mm AM/PM for timeformat=12, or HH:mm for timeformat=24. No date or UTC offset is included. Null when the event is unavailable.'
+          example: 06:30
+        sunset:
+          type:
+          - string
+          - 'null'
+          description: 'Short local clock time: h:mm AM/PM for timeformat=12, or HH:mm for timeformat=24. No date or UTC offset is included. Null when the event is unavailable.'
+          example: 06:30
+      required:
+      - sunrise
+      - sunset
+      description: Present when date is omitted and the summary is available. Sunrise and sunset use short clock times.
+    MorningEvening:
+      type: object
+      properties:
+        morning:
+          $ref: '#/components/schemas/TimePeriod'
+        evening:
+          $ref: '#/components/schemas/TimePeriod'
+      required:
+      - morning
+      - evening
+    KaranaValue:
+      type: object
+      properties:
+        number:
+          type: integer
+          minimum: 1
+          maximum: 60
+          description: Half-tithi index from 1 to 60.
+        name:
+          type: string
+          description: Karana name for the half-tithi.
+      required:
+      - number
+      - name
+    YogaValue:
+      type: object
+      properties:
+        number:
+          type: integer
+          minimum: 1
+          maximum: 27
+          description: Yoga index from 1 to 27.
+        name:
+          type: string
+          description: Yoga name from the sidereal Sun-plus-Moon longitude.
+      required:
+      - number
+      - name
+    CalculationError:
+      description: A structured error from the calculation service or an error generated by the API. Generated errors always include code. Upstream errors can omit code or use service-specific codes.
+      anyOf:
+      - $ref: '#/components/schemas/Error'
+      - $ref: '#/components/schemas/ValidationError'
+    MoonDetails:
+      type: object
+      properties:
+        evaluated_at:
+          type: string
+          format: date-time
+          description: Local noon on the requested date, always ISO-8601.
+        status:
+          type: string
+          enum:
+          - ok
+          - outside_supported_range
+          description: ok when calculated, or outside_supported_range when local noon falls outside the supported UTC interval.
+        illumination_pct:
+          type:
+          - number
+          - 'null'
+          minimum: 0
+          maximum: 100
+          description: Illuminated portion of the Moon, from 0 to 100 percent. Null outside the supported interval.
+        phase_angle_deg:
+          type:
+          - number
+          - 'null'
+          minimum: 0
+          maximum: 360
+          description: Sun–Moon ecliptic longitude separation, from 0 to 360 degrees. Null outside the supported interval.
+      required:
+      - evaluated_at
+      - status
+      - illumination_pct
+      - phase_angle_deg
+      description: Optional Moon calculation, present only with include=moon_details. Evaluated at local noon on the requested date.
+    TwilightPeriod:
+      type: object
+      properties:
+        start:
+          $ref: '#/components/schemas/EventTime'
+        end:
+          $ref: '#/components/schemas/EventTime'
+        status:
+          type: string
+          enum:
+          - ok
+          - no_crossing
+          description: ok when both crossings occur; no_crossing when the requested twilight boundary is not crossed.
+      required:
+      - start
+      - end
+      - status
+    Daylight:
+      type: object
+      properties:
+        duration_seconds:
+          type:
+          - integer
+          - 'null'
+          minimum: 0
+          description: Total daylight during the local calendar day, in seconds. Null when unavailable.
+        change_from_yesterday_seconds:
+          type:
+          - integer
+          - 'null'
+          description: Difference from the previous local day, in seconds. Negative means a shorter day. Null when unavailable.
+        status:
+          type: string
+          enum:
+          - normal
+          - polar_day
+          - polar_night
+          - unavailable
+          description: normal for a day with crossings, polar_day for continuous daylight, polar_night for continuous darkness, or unavailable when the duration cannot be calculated.
+      required:
+      - duration_seconds
+      - change_from_yesterday_seconds
+      - status
+    CalendarWindow:
+      type: object
+      properties:
+        start:
+          type: string
+          format: date-time
+          description: Inclusive start of the calculation window, in ISO-8601 with local UTC offset.
+        end:
+          type: string
+          format: date-time
+          description: Exclusive end of the calculation window, in ISO-8601 with local UTC offset.
+        end_exclusive:
+          type: boolean
+          enum:
+          - true
+          description: Always true. A transition at end belongs to the next window.
+      required:
+      - start
+      - end
+      - end_exclusive
+    ValidationError:
+      type: object
+      properties:
+        detail:
+          type: array
+          items:
+            type: object
+            properties:
+              loc:
+                type: array
+                items:
+                  oneOf:
+                  - type: string
+                  - type: integer
+              msg:
+                type: string
+              type:
+                type: string
+              input:
+                description: The invalid value, when supplied by the upstream validator.
+              ctx:
+                type: object
+                additionalProperties: true
+            required:
+            - loc
+            - msg
+            - type
+      required:
+      - detail
+      description: Upstream parameter type errors can use this format with HTTP 422.
+  examples:
+    MumbaiPanchang:
+      summary: Mumbai, 2026-10-01. Captured from the public API.
+      value:
+        date: '2026-10-01'
+        location:
+          lat: 19.076
+          lon: 72.878
+        timezone: Asia/Kolkata
+        window:
+          start: '2026-10-01T06:29:17.496578+05:30'
+          end: '2026-10-02T06:29:30.257545+05:30'
+          end_exclusive: true
+        day_basis: sunrise_to_next_sunrise
+        weekday: Thursday
+        tithi:
+          at_start:
+            number: 20
+            name: Panchami
+            paksha: Krishna
+          transitions:
+          - datetime: '2026-10-01T12:35:43.103591+05:30'
+            to:
+              number: 21
+              name: Shashthi
+              paksha: Krishna
+        nakshatra:
+          at_start:
+            number: 4
+            name: Rohini
+          transitions:
+          - datetime: '2026-10-02T04:27:24.803122+05:30'
+            to:
+              number: 5
+              name: Mrigashira
+        yoga:
+          at_start:
+            number: 16
+            name: Siddhi
+          transitions:
+          - datetime: '2026-10-01T21:18:23.791264+05:30'
+            to:
+              number: 17
+              name: Vyatipata
+        karana:
+          at_start:
+            number: 40
+            name: Taitila
+          transitions:
+          - datetime: '2026-10-01T12:35:43.103591+05:30'
+            to:
+              number: 41
+              name: Gara
+          - datetime: '2026-10-01T23:25:24.459928+05:30'
+            to:
+              number: 42
+              name: Vanija
+        conventions:
+          ayanamsa: Lahiri approximation; same model as /astronomy
+          positions: apparent geocentric ecliptic of date
+          tithi: Moon minus Sun, 30 equal divisions
+          nakshatra: sidereal Moon, 27 equal divisions
+          yoga: sidereal Moon plus Sun, 27 equal divisions
+          karana: Moon minus Sun, 60 equal divisions
+          scope: astronomical limbs; no festival or regional observance rules
+    CurrentTimes:
+      summary: Mumbai with no date supplied. Includes today and tomorrow summaries; captured 2026-10-19.
+      value:
+        date: '2026-10-19'
+        timezone: Asia/Kolkata
+        location:
+          lat: 19.076
+          lon: 72.878
+        sun:
+          events:
+            dawn: 2026-10-19T06:11:23 AM +0530
+            sunrise: 2026-10-19T06:33:58 AM +0530
+            noon: 2026-10-19T12:23:31 PM +0530
+            sunset: 2026-10-19T06:12:41 PM +0530
+            dusk: 2026-10-19T06:35:16 PM +0530
+          daylight:
+            duration_seconds: 41923
+            change_from_yesterday_seconds: -61
+            status: normal
+          twilight_periods:
+            civil:
+              morning:
+                start: 2026-10-19T06:11:23 AM +0530
+                end: 2026-10-19T06:33:58 AM +0530
+                status: ok
+              evening:
+                start: 2026-10-19T06:12:41 PM +0530
+                end: 2026-10-19T06:35:16 PM +0530
+                status: ok
+            nautical:
+              morning:
+                start: 2026-10-19T05:45:53 AM +0530
+                end: 2026-10-19T06:11:23 AM +0530
+                status: ok
+              evening:
+                start: 2026-10-19T06:35:16 PM +0530
+                end: 2026-10-19T07:00:46 PM +0530
+                status: ok
+            astronomical:
+              morning:
+                start: 2026-10-19T05:20:24 AM +0530
+                end: 2026-10-19T05:45:53 AM +0530
+                status: ok
+              evening:
+                start: 2026-10-19T07:00:46 PM +0530
+                end: 2026-10-19T07:26:14 PM +0530
+                status: ok
+          twilight:
+            morning:
+              start: 2026-10-19T06:11:23 AM +0530
+              end: 2026-10-19T06:33:58 AM +0530
+            evening:
+              start: 2026-10-19T06:12:41 PM +0530
+              end: 2026-10-19T06:35:16 PM +0530
+          photography:
+            golden_hour:
+              morning:
+                start: 2026-10-19T06:19:50 AM +0530
+                end: 2026-10-19T07:02:42 AM +0530
+              evening:
+                start: 2026-10-19T05:43:58 PM +0530
+                end: 2026-10-19T06:26:50 PM +0530
+            blue_hour:
+              morning:
+                start: 2026-10-19T06:11:23 AM +0530
+                end: 2026-10-19T06:19:50 AM +0530
+              evening:
+                start: 2026-10-19T06:26:50 PM +0530
+                end: 2026-10-19T06:35:16 PM +0530
+        moon:
+          moonrise: 2026-10-19T01:43:00 PM +0530
+          moonset: 2026-10-19T12:11:00 AM +0530
+          phase_value: 7.733444444444445
+          phase_description: First Quarter
+        rahukaalam:
+          start: 2026-10-19T08:01:19 AM +0530
+          end: 2026-10-19T09:28:39 AM +0530
+        today:
+          day_progress_pct: 72
+          daylight_remaining_seconds: 11851
+          sunrise: 6:33 AM
+          sunset: 6:12 PM
+        tomorrow:
+          sunrise: 6:34 AM
+          sunset: 6:12 PM
+    PolarTimes:
+      summary: Longyearbyen, 2026-12-21. Missing events are null; Rahu Kaal is absent.
+      value:
+        date: '2026-12-21'
+        timezone: Arctic/Longyearbyen
+        location:
+          lat: 78.2232
+          lon: 15.6469
+        sun:
+          events:
+            error: expected a number in range from -1 up to 1, got 1.5157932535815861
+            dawn: null
+            sunrise: null
+            noon: 2026-12-21T11:55:14 AM +0100
+            sunset: null
+            dusk: null
+          daylight:
+            duration_seconds: 0
+            change_from_yesterday_seconds: 0
+            status: polar_night
+          twilight_periods:
+            civil:
+              morning:
+                start: null
+                end: null
+                status: no_crossing
+              evening:
+                start: null
+                end: null
+                status: no_crossing
+            nautical:
+              morning:
+                start: null
+                end: null
+                status: no_crossing
+              evening:
+                start: null
+                end: null
+                status: no_crossing
+            astronomical:
+              morning:
+                start: 2026-12-21T07:36:36 AM +0100
+                end: 2026-12-21T10:55:59 AM +0100
+                status: ok
+              evening:
+                start: 2026-12-21T12:54:55 PM +0100
+                end: 2026-12-21T04:14:18 PM +0100
+                status: ok
+        moon:
+          error: Moon never rises on this date, at this location
+          moonrise: null
+          moonset: null
+          phase_value: 11.155666666666667
+          phase_description: Waxing Gibbous
+    MumbaiTimes:
+      summary: Mumbai, 2026-10-01, 24-hour timestamps with Moon details.
+      value:
+        date: '2026-10-01'
+        timezone: Asia/Kolkata
+        location:
+          lat: 19.076
+          lon: 72.878
+        sun:
+          events:
+            dawn: '2026-10-01T06:06:59.104550+05:30'
+            sunrise: '2026-10-01T06:29:17.496578+05:30'
+            noon: '2026-10-01T12:28:19+05:30'
+            sunset: '2026-10-01T18:26:53.735942+05:30'
+            dusk: '2026-10-01T18:49:11.330546+05:30'
+          daylight:
+            duration_seconds: 43056
+            change_from_yesterday_seconds: -64
+            status: normal
+          twilight_periods:
+            civil:
+              morning:
+                start: '2026-10-01T06:06:59.104550+05:30'
+                end: '2026-10-01T06:29:17.496578+05:30'
+                status: ok
+              evening:
+                start: '2026-10-01T18:26:53.735942+05:30'
+                end: '2026-10-01T18:49:11.330546+05:30'
+                status: ok
+            nautical:
+              morning:
+                start: '2026-10-01T05:41:42.176856+05:30'
+                end: '2026-10-01T06:06:59.104550+05:30'
+                status: ok
+              evening:
+                start: '2026-10-01T18:49:11.330546+05:30'
+                end: '2026-10-01T19:14:27.175261+05:30'
+                status: ok
+            astronomical:
+              morning:
+                start: '2026-10-01T05:16:19.730117+05:30'
+                end: '2026-10-01T05:41:42.176856+05:30'
+                status: ok
+              evening:
+                start: '2026-10-01T19:14:27.175261+05:30'
+                end: '2026-10-01T19:39:48.291006+05:30'
+                status: ok
+          twilight:
+            morning:
+              start: '2026-10-01T06:06:59.104550+05:30'
+              end: '2026-10-01T06:29:17.496578+05:30'
+            evening:
+              start: '2026-10-01T18:26:53.735942+05:30'
+              end: '2026-10-01T18:49:11.330546+05:30'
+          photography:
+            golden_hour:
+              morning:
+                start: '2026-10-01T06:15:20.240229+05:30'
+                end: '2026-10-01T06:57:31.260031+05:30'
+              evening:
+                start: '2026-10-01T17:58:40.812208+05:30'
+                end: '2026-10-01T18:40:50.509051+05:30'
+            blue_hour:
+              morning:
+                start: '2026-10-01T06:06:59.104550+05:30'
+                end: '2026-10-01T06:15:20.240229+05:30'
+              evening:
+                start: '2026-10-01T18:40:50.509051+05:30'
+                end: '2026-10-01T18:49:11.330546+05:30'
+        moon:
+          moonrise: '2026-10-01T22:03:00+05:30'
+          moonset: '2026-10-01T10:55:00+05:30'
+          phase_value: 18.855666666666668
+          phase_description: Waning Gibbous
+          details:
+            evaluated_at: '2026-10-01T12:00:00+05:30'
+            status: ok
+            illumination_pct: 75.24699892540643
+            phase_angle_deg: 239.67007006673308
+        rahukaalam:
+          start: '2026-10-01T13:57:47.496578+05:30'
+          end: '2026-10-01T15:27:29.496578+05:30'
+  parameters:
+    LongitudeAlias:
+      name: lon
+      in: query
+      description: Alternative to lng. Used only when lng is absent. Supply lat as well.
+      required: false
+      schema:
+        type: number
+        minimum: -180
+        maximum: 180
+      example: 72.878
+      x-default-description: No default. This is an alternative longitude parameter, not an additional coordinate.
+    Longitude:
+      name: lng
+      in: query
+      description: Longitude in degrees. Required with lat unless lon or long is supplied. The API checks lng first, then lon, then long. OpenAPI cannot express this dependency between query parameters.
+      required: false
+      schema:
+        type: number
+        minimum: -180
+        maximum: 180
+      example: 72.878
+      x-default-description: Use lon, then long, if lng is absent. A longitude is required whenever lat is supplied.
+    LongAlias:
+      name: long
+      in: query
+      description: Alternative to lng and lon. Used only when both are absent. Supply lat as well.
+      required: false
+      schema:
+        type: number
+        minimum: -180
+        maximum: 180
+      example: 72.878
+      x-default-description: No default. This is an alternative longitude parameter, not an additional coordinate.
+    Date:
+      name: date
+      in: query
+      description: Local calendar date in YYYY-MM-DD format. Omit the parameter or leave it empty to use today in the timezone derived from the coordinates. Panchang uses the date to select sunrise through the next sunrise. For Sun and Moon times, an explicit date omits the live today and tomorrow summaries.
+      required: false
+      schema:
+        type: string
+        format: date
+      example: '2026-10-01'
+      x-default-description: Today in the timezone derived from the coordinates.
+      allowEmptyValue: true
+    TimeFormat:
+      name: timeformat
+      in: query
+      description: Event time display. Use 12 for YYYY-MM-DDThh:mm:ss AM/PM ±HHMM (for example, 2026-10-01T06:30:00 AM +0530). Use 24 for ISO-8601 with the local UTC offset (for example, 2026-10-01T06:30:00+05:30). The short sunrise and sunset values in today/tomorrow use h:mm AM/PM or HH:mm. moon.details.evaluated_at always uses ISO-8601. Only the exact strings 12 and 24 are accepted.
+      required: false
+      schema:
+        type: string
+        enum:
+        - '12'
+        - '24'
+        default: '12'
+        x-enumDescriptions:
+          '12': 12-hour event times with AM/PM and UTC offset. API default.
+          '24': ISO-8601 event timestamps with UTC offset. Playground preset.
+      example: '24'
+    MoonDetails:
+      name: include
+      in: query
+      description: Add moon.details with illumination_pct, phase_angle_deg, evaluated_at and status. The calculation uses local noon on the selected date, not the current time. evaluated_at is always ISO-8601, independent of timeformat. Outside the supported UTC interval from 1900-01-01 inclusive to 2053-01-01 exclusive, illumination_pct and phase_angle_deg are null and status is outside_supported_range. This endpoint accepts only moon_details. Omit include or send an empty value for the standard response. The parameter is a comma-separated list; whitespace and duplicate entries are ignored. Unknown values return HTTP 400.
+      required: false
+      schema:
+        type: array
+        items:
+          type: string
+          enum:
+          - moon_details
+        default: []
+      style: form
+      explode: false
+      allowEmptyValue: true
+      example:
+      - moon_details
+      x-default-description: No extra fields. Omit include or leave its value empty.
+    RequiredLatitude:
+      name: lat
+      in: query
+      description: Latitude in degrees. Also supply lng, lon or long.
+      required: true
+      schema:
+        type: number
+        minimum: -90
+        maximum: 90
+      example: 19.076
+  headers:
+    Allow:
+      description: Supported methods.
+      schema:
+        type: string
+        enum:
+        - GET, OPTIONS
+    AllowHeaders:
+      description: Allowed preflight request headers.
+      schema:
+        type: string
+        enum:
+        - Accept, Content-Type
+    AllowOrigin:
+      description: Public data can be read by any origin without credentials.
+      schema:
+        type: string
+        enum:
+        - '*'
+    AllowMethods:
+      description: Supported public data methods.
+      schema:
+        type: string
+        enum:
+        - GET, OPTIONS
+    ExposeHeaders:
+      description: Response headers exposed to browser scripts.
+      schema:
+        type: string
+        enum:
+        - Server-Timing
+    NoStore:
+      description: Error responses must not be cached.
+      schema:
+        type: string
+        enum:
+        - no-store
+    ServerTiming:
+      description: Timing information from the calculation service, when available.
+      schema:
+        type: string
+externalDocs:
+  description: Interactive API explorer
+  url: https://freehoroscopeapi.com/explorer

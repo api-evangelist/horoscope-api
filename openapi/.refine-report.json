@@ -1,20 +1,21 @@
 {
   "provider": "horoscope-api",
   "sources": [
-    "_original/horoscope-api-openapi.yml"
+    "_original/horoscope-api-openapi.json"
   ],
   "outputs": [
-    "horoscope-api-horoscope-api-openapi.yml"
+    "horoscope-api-calendar-api-openapi.yml",
+    "horoscope-api-horoscopes-api-openapi.yml",
+    "horoscope-api-planetary-data-api-openapi.yml",
+    "horoscope-api-tarot-api-openapi.yml"
   ],
   "archived": [],
   "errors": [],
   "warnings": [],
   "notes": [
     "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
-    "horoscope-api-openapi.yml: upgraded openapi 3.0.3 -> OpenAPI 3.2.0",
-    "apis.yml register: already-registered"
+    "horoscope-api-openapi.json: upgraded openapi 3.0.3 -> OpenAPI 3.2.0",
+    "apis.yml register: written (+4 apis, 4 total)"
   ],
-  "skipped": [
-    "horoscope-api-horoscope-api-openapi.yml: previously refined output, superseded by openapi/_original/"
-  ]
+  "skipped": []
 }

@@ -1,0 +1,1047 @@
+openapi: 3.2.0
+info:
+  title: FreeHoroscope Planetary data API
+  version: 1.1.0
+  description: Free public JSON APIs for horoscope readings, tarot cards, planetary positions, Panchang and Sun/Moon times. No API key or account is required. Public data routes support GET and OPTIONS with cross-origin access without credentials. Horoscope responses use a data wrapper; tarot responses use nhits and cards; calculation responses have no wrapper. This document covers the public data API, not account management. All references are included in this file. Commercial and non-commercial API use is allowed with attribution. Include a visible Powered by FreeHoroscopeAPI link to https://freehoroscopeapi.com in your application, website, or public documentation. Upstream requests have a total deadline of 10 seconds for horoscopes and 30 seconds for calculations, including the response body. Successful upstream data must match the response schema. Gateway errors include a stable code and a readable error message.
+  contact:
+    name: FreeHoroscopeAPI
+    url: https://freehoroscopeapi.com
+    email: admin@freehoroscopeapi.com
+  termsOfService: https://freehoroscopeapi.com/#usage-terms
+servers:
+- url: https://freehoroscopeapi.com
+  description: Production API
+security: []
+tags:
+- name: Planetary data
+  description: Calculated positions and classifications.
+paths:
+  /api/v1/planetary-positions:
+    get:
+      operationId: getPlanetaryPositions
+      summary: Get planetary positions
+      description: Returns calculated planetary positions, not written horoscope readings. No data wrapper. All 12 bodies are included. Coordinates are optional but must be supplied as a pair. Sidereal output uses an approximate Lahiri model, with mean Rahu and Ketu. No houses or Ascendant are returned. The complete upstream body is checked against the response schema before it is returned. The total upstream deadline is 30 seconds. The timezone is derived from the coordinates and returned in the response; a timezone query parameter cannot override it.
+      tags:
+      - Planetary data
+      parameters:
+      - $ref: '#/components/parameters/Datetime'
+      - $ref: '#/components/parameters/Zodiac'
+      - $ref: '#/components/parameters/Latitude'
+      - $ref: '#/components/parameters/Longitude'
+      - $ref: '#/components/parameters/LongitudeAlias'
+      - $ref: '#/components/parameters/LongAlias'
+      - $ref: '#/components/parameters/Observer'
+      responses:
+        '200':
+          description: Geocentric positions and optional observer data.
+          headers:
+            Access-Control-Allow-Origin:
+              $ref: '#/components/headers/AllowOrigin'
+            Server-Timing:
+              $ref: '#/components/headers/ServerTiming'
+            Access-Control-Expose-Headers:
+              $ref: '#/components/headers/ExposeHeaders'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlanetaryPositions'
+              examples:
+                SiderealPositions:
+                  $ref: '#/components/examples/SiderealPositions'
+                TropicalPositions:
+                  $ref: '#/components/examples/TropicalPositions'
+        '400':
+          description: Invalid coordinate, date, datetime, include option or calculation range.
+          headers:
+            Access-Control-Allow-Origin:
+              $ref: '#/components/headers/AllowOrigin'
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CalculationError'
+              example:
+                error: lat must be between -90 and 90
+        '405':
+          $ref: '#/components/responses/CalculationMethodNotAllowed'
+        '422':
+          $ref: '#/components/responses/CalculationValidationFailed'
+        '502':
+          $ref: '#/components/responses/CalculationBadGateway'
+        '503':
+          $ref: '#/components/responses/CalculationServiceUnavailable'
+        '504':
+          $ref: '#/components/responses/CalculationGatewayTimeout'
+        default:
+          description: A structured JSON error from the calculation service is passed through with its HTTP status and body. It contains an error string or a validation detail array. Errors are not cached. Malformed or non-JSON errors are replaced with HTTP 502.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+            Access-Control-Allow-Origin:
+              $ref: '#/components/headers/AllowOrigin'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CalculationError'
+    options:
+      operationId: getPlanetaryPositionsPreflight
+      summary: Check browser access
+      tags:
+      - Planetary data
+      responses:
+        '204':
+          $ref: '#/components/responses/Preflight'
+  /api/v1/astrology:
+    get:
+      operationId: getAstrology
+      summary: Get planetary positions (compatibility alias)
+      description: Compatibility alias of /api/v1/planetary-positions with identical parameters and response. Returns calculated planetary positions, not written horoscope readings. No data wrapper. All 12 bodies are included. Coordinates are optional but must be supplied as a pair. Sidereal output uses an approximate Lahiri model, with mean Rahu and Ketu. No houses or Ascendant are returned. The complete upstream body is checked against the response schema before it is returned. The total upstream deadline is 30 seconds. The timezone is derived from the coordinates and returned in the response; a timezone query parameter cannot override it.
+      tags:
+      - Planetary data
+      parameters:
+      - $ref: '#/components/parameters/Datetime'
+      - $ref: '#/components/parameters/Zodiac'
+      - $ref: '#/components/parameters/Latitude'
+      - $ref: '#/components/parameters/Longitude'
+      - $ref: '#/components/parameters/LongitudeAlias'
+      - $ref: '#/components/parameters/LongAlias'
+      - $ref: '#/components/parameters/Observer'
+      responses:
+        '200':
+          description: Geocentric positions and optional observer data.
+          headers:
+            Access-Control-Allow-Origin:
+              $ref: '#/components/headers/AllowOrigin'
+            Server-Timing:
+              $ref: '#/components/headers/ServerTiming'
+            Access-Control-Expose-Headers:
+              $ref: '#/components/headers/ExposeHeaders'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlanetaryPositions'
+              examples:
+                SiderealPositions:
+                  $ref: '#/components/examples/SiderealPositions'
+                TropicalPositions:
+                  $ref: '#/components/examples/TropicalPositions'
+        '400':
+          description: Invalid coordinate, date, datetime, include option or calculation range.
+          headers:
+            Access-Control-Allow-Origin:
+              $ref: '#/components/headers/AllowOrigin'
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CalculationError'
+              example:
+                error: lat must be between -90 and 90
+        '405':
+          $ref: '#/components/responses/CalculationMethodNotAllowed'
+        '422':
+          $ref: '#/components/responses/CalculationValidationFailed'
+        '502':
+          $ref: '#/components/responses/CalculationBadGateway'
+        '503':
+          $ref: '#/components/responses/CalculationServiceUnavailable'
+        '504':
+          $ref: '#/components/responses/CalculationGatewayTimeout'
+        default:
+          description: A structured JSON error from the calculation service is passed through with its HTTP status and body. It contains an error string or a validation detail array. Errors are not cached. Malformed or non-JSON errors are replaced with HTTP 502.
+          headers:
+            Cache-Control:
+              $ref: '#/components/headers/NoStore'
+            Access-Control-Allow-Origin:
+              $ref: '#/components/headers/AllowOrigin'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CalculationError'
+    options:
+      operationId: getAstrologyPreflight
+      summary: Check browser access
+      tags:
+      - Planetary data
+      responses:
+        '204':
+          $ref: '#/components/responses/Preflight'
+components:
+  responses:
+    CalculationServiceUnavailable:
+      description: The calculation service is unavailable or not configured. A valid structured error returned by the calculation service with this status is passed through unchanged.
+      headers:
+        Access-Control-Allow-Origin:
+          $ref: '#/components/headers/AllowOrigin'
+        Cache-Control:
+          $ref: '#/components/headers/NoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CalculationError'
+          example:
+            error: The calculation service is not configured. Contact support.
+            code: service_not_configured
+    Preflight:
+      description: Browser preflight accepted. No response body. Parameters are not validated and no upstream request is made.
+      headers:
+        Access-Control-Allow-Origin:
+          $ref: '#/components/headers/AllowOrigin'
+        Access-Control-Allow-Methods:
+          $ref: '#/components/headers/AllowMethods'
+        Access-Control-Allow-Headers:
+          $ref: '#/components/headers/AllowHeaders'
+    CalculationValidationFailed:
+      description: The calculation service could not parse a parameter, such as a non-numeric coordinate. A valid structured error returned by the calculation service with this status is passed through unchanged.
+      headers:
+        Access-Control-Allow-Origin:
+          $ref: '#/components/headers/AllowOrigin'
+        Cache-Control:
+          $ref: '#/components/headers/NoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CalculationError'
+          example:
+            detail:
+            - type: float_parsing
+              loc:
+              - query
+              - lat
+              msg: Input should be a valid number
+              input: invalid
+    CalculationGatewayTimeout:
+      description: 'The upstream service exceeded the total request and body deadline: 10 seconds for horoscopes or 30 seconds for calculations. Retry later with a limited number of attempts and increasing delays. A valid structured error returned by the calculation service with this status is passed through unchanged.'
+      headers:
+        Access-Control-Allow-Origin:
+          $ref: '#/components/headers/AllowOrigin'
+        Cache-Control:
+          $ref: '#/components/headers/NoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CalculationError'
+          example:
+            error: The upstream service took too long to respond. Try again later.
+            code: upstream_timeout
+    CalculationMethodNotAllowed:
+      description: This endpoint supports GET and OPTIONS only. A valid structured error returned by the calculation service with this status is passed through unchanged.
+      headers:
+        Access-Control-Allow-Origin:
+          $ref: '#/components/headers/AllowOrigin'
+        Allow:
+          $ref: '#/components/headers/Allow'
+        Cache-Control:
+          $ref: '#/components/headers/NoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CalculationError'
+          example:
+            error: Method not allowed. Use GET or OPTIONS.
+            code: method_not_allowed
+    CalculationBadGateway:
+      description: The upstream request failed, returned an unexpected HTTP status, or returned invalid data. Responses must use a JSON content type and must not exceed 1 MiB. Successful data must match the documented schema. Horoscope signs and periods must also match the request. No partial data is returned. A valid structured error returned by the calculation service with this status is passed through unchanged.
+      headers:
+        Access-Control-Allow-Origin:
+          $ref: '#/components/headers/AllowOrigin'
+        Cache-Control:
+          $ref: '#/components/headers/NoStore'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CalculationError'
+          examples:
+            Unavailable:
+              value:
+                error: The upstream service is unavailable. Try again later.
+                code: upstream_unavailable
+            InvalidResponse:
+              value:
+                error: The upstream service returned invalid data. Try again later.
+                code: invalid_upstream_response
+  parameters:
+    Zodiac:
+      name: zodiac
+      in: query
+      description: Sidereal uses an approximate Lahiri model. Tropical results omit nakshatra and pada and return a null ayanamsa.
+      required: false
+      schema:
+        type: string
+        enum:
+        - sidereal
+        - tropical
+        default: sidereal
+        x-enumDescriptions:
+          sidereal: Approximate Lahiri zodiac; includes nakshatra and pada.
+          tropical: Tropical zodiac; omits nakshatra and pada and sets ayanamsa to null.
+      example: sidereal
+    LongitudeAlias:
+      name: lon
+      in: query
+      description: Alternative to lng. Used only when lng is absent. Supply lat as well.
+      required: false
+      schema:
+        type: number
+        minimum: -180
+        maximum: 180
+      example: 72.878
+      x-default-description: No default. This is an alternative longitude parameter, not an additional coordinate.
+    Longitude:
+      name: lng
+      in: query
+      description: Longitude in degrees. Required with lat unless lon or long is supplied. The API checks lng first, then lon, then long. OpenAPI cannot express this dependency between query parameters.
+      required: false
+      schema:
+        type: number
+        minimum: -180
+        maximum: 180
+      example: 72.878
+      x-default-description: Use lon, then long, if lng is absent. A longitude is required whenever lat is supplied.
+    LongAlias:
+      name: long
+      in: query
+      description: Alternative to lng and lon. Used only when both are absent. Supply lat as well.
+      required: false
+      schema:
+        type: number
+        minimum: -180
+        maximum: 180
+      example: 72.878
+      x-default-description: No default. This is an alternative longitude parameter, not an additional coordinate.
+    Observer:
+      name: include
+      in: query
+      description: 'Add observer positions for the ten physical bodies: Sun, Moon, Mercury, Venus, Mars, Jupiter, Saturn, Uranus, Neptune and Pluto. Includes altitude_deg, azimuth_deg, distance_km and above_horizon. Rahu and Ketu are not physical bodies. Requires lat and one of lng, lon or long. The geocentric bodies object is unchanged. This endpoint accepts only observer. Omit include or send an empty value for the standard response. The parameter is a comma-separated list; whitespace and duplicate entries are ignored. Unknown values return HTTP 400.'
+      required: false
+      schema:
+        type: array
+        items:
+          type: string
+          enum:
+          - observer
+        default: []
+      style: form
+      explode: false
+      allowEmptyValue: true
+      example:
+      - observer
+      x-default-description: No extra fields. Omit include or leave its value empty.
+    Latitude:
+      name: lat
+      in: query
+      description: Latitude in degrees. For planetary positions, omit both coordinates or supply latitude and one longitude. Required when include=observer.
+      required: false
+      schema:
+        type: number
+        minimum: -90
+        maximum: 90
+      example: 19.076
+      x-default-description: Omit both coordinates for geocentric positions without location metadata.
+    Datetime:
+      name: datetime
+      in: query
+      description: 'Defaults to the current instant. Supply ISO-8601 with seconds and Z or an explicit UTC offset. Supported UTC instants: 1900-01-01 inclusive to 2053-01-01 exclusive. Fractional seconds may have up to six digits. Date-only values, missing offsets, leap seconds and -00:00 are rejected. URL-encode a positive offset sign as %2B. Coordinates do not infer the input timezone.'
+      required: false
+      schema:
+        type: string
+        format: date-time
+      example: '2000-01-01T12:00:00Z'
+      x-default-description: The current instant in UTC when the parameter is omitted.
+  headers:
+    Allow:
+      description: Supported methods.
+      schema:
+        type: string
+        enum:
+        - GET, OPTIONS
+    AllowHeaders:
+      description: Allowed preflight request headers.
+      schema:
+        type: string
+        enum:
+        - Accept, Content-Type
+    AllowOrigin:
+      description: Public data can be read by any origin without credentials.
+      schema:
+        type: string
+        enum:
+        - '*'
+    AllowMethods:
+      description: Supported public data methods.
+      schema:
+        type: string
+        enum:
+        - GET, OPTIONS
+    ExposeHeaders:
+      description: Response headers exposed to browser scripts.
+      schema:
+        type: string
+        enum:
+        - Server-Timing
+    NoStore:
+      description: Error responses must not be cached.
+      schema:
+        type: string
+        enum:
+        - no-store
+    ServerTiming:
+      description: Timing information from the calculation service, when available.
+      schema:
+        type: string
+  schemas:
+    ObserverBody:
+      type: object
+      properties:
+        altitude_deg:
+          type: number
+          description: Geometric altitude of the body center, without refraction.
+        azimuth_deg:
+          type: number
+          description: Degrees clockwise from true north.
+        distance_km:
+          type: number
+          minimum: 0
+          description: Distance from the observer to the body, in kilometres.
+        above_horizon:
+          type: boolean
+          description: True when the geometric body-center altitude is above the horizon.
+      required:
+      - altitude_deg
+      - azimuth_deg
+      - distance_km
+      - above_horizon
+    PlanetaryPositions:
+      type: object
+      properties:
+        datetime:
+          type: string
+          format: date-time
+          description: Resolved instant in UTC.
+        zodiac:
+          type: string
+          enum:
+          - sidereal
+          - tropical
+          description: Resolved zodiac system.
+        ayanamsa:
+          $ref: '#/components/schemas/Ayanamsa'
+        node_convention:
+          type: string
+          enum:
+          - mean
+          description: Lunar node convention. The API uses mean nodes.
+        reference_frame:
+          type: string
+          description: Reference frame for the geocentric positions.
+        units:
+          type: object
+          additionalProperties:
+            type: string
+          description: Units for each numeric position field.
+        engine:
+          $ref: '#/components/schemas/CalculationEngine'
+        bodies:
+          type: object
+          properties:
+            sun:
+              $ref: '#/components/schemas/PlanetaryBody'
+            moon:
+              $ref: '#/components/schemas/PlanetaryBody'
+            mercury:
+              $ref: '#/components/schemas/PlanetaryBody'
+            venus:
+              $ref: '#/components/schemas/PlanetaryBody'
+            mars:
+              $ref: '#/components/schemas/PlanetaryBody'
+            jupiter:
+              $ref: '#/components/schemas/PlanetaryBody'
+            saturn:
+              $ref: '#/components/schemas/PlanetaryBody'
+            uranus:
+              $ref: '#/components/schemas/PlanetaryBody'
+            neptune:
+              $ref: '#/components/schemas/PlanetaryBody'
+            pluto:
+              $ref: '#/components/schemas/PlanetaryBody'
+            rahu:
+              $ref: '#/components/schemas/PlanetaryBody'
+            ketu:
+              $ref: '#/components/schemas/PlanetaryBody'
+          required:
+          - sun
+          - moon
+          - mercury
+          - venus
+          - mars
+          - jupiter
+          - saturn
+          - uranus
+          - neptune
+          - pluto
+          - rahu
+          - ketu
+          description: 'All 12 bodies are always present: Sun, Moon, Mercury, Venus, Mars, Jupiter, Saturn, Uranus, Neptune, Pluto, Rahu and Ketu. No include parameter is needed for outer planets.'
+        location:
+          $ref: '#/components/schemas/Location'
+        timezone:
+          type: string
+          description: IANA timezone identifier derived from the coordinates, for example Asia/Kolkata, Europe/London or America/New_York. UTC is the fallback if no timezone is found. The value can be any timezone returned by the location database; it is not a fixed list. timezone is a response field, not a supported query parameter. Local dates and event offsets follow this timezone, including daylight saving time where applicable. Present only when coordinates are supplied; it does not change the UTC datetime or geocentric positions.
+          example: Asia/Kolkata
+          readOnly: true
+        observer:
+          $ref: '#/components/schemas/Observer'
+      required:
+      - datetime
+      - zodiac
+      - ayanamsa
+      - node_convention
+      - reference_frame
+      - units
+      - engine
+      - bodies
+      description: Calculated positions at one instant. There is no data wrapper. location and timezone appear only with coordinates; observer appears only with include=observer.
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message.
+          minLength: 1
+          pattern: \S
+        code:
+          type: string
+          description: 'Stable code for errors generated by this API: missing_sign, invalid_sign, invalid_count, method_not_allowed, upstream_unavailable, invalid_upstream_response, upstream_timeout or service_not_configured. Errors passed through from the calculation service can omit code or use a service-specific code such as invalid_parameter.'
+      required:
+      - error
+    PlanetaryBody:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+          - luminary
+          - planet
+          - dwarf_planet
+          - lunar_node
+          description: Body classification.
+        longitude:
+          type: number
+          minimum: 0
+          maximum: 360
+          description: Degrees in the selected zodiac, from 0 inclusive to 360 exclusive.
+        latitude:
+          type: number
+          description: Ecliptic latitude in degrees; zero for lunar nodes.
+        longitude_speed:
+          type: number
+          description: Degrees per TT day in the selected zodiac.
+        retrograde:
+          type: boolean
+          description: True when longitude_speed is negative in the selected zodiac.
+        sign:
+          type: string
+          enum:
+          - Aries
+          - Taurus
+          - Gemini
+          - Cancer
+          - Leo
+          - Virgo
+          - Libra
+          - Scorpio
+          - Sagittarius
+          - Capricorn
+          - Aquarius
+          - Pisces
+          description: Zodiac sign containing the selected longitude.
+        degrees_in_sign:
+          type: number
+          minimum: 0
+          maximum: 30
+          description: From 0 inclusive to 30 exclusive.
+        nakshatra:
+          type: string
+          description: Present only for sidereal positions.
+        pada:
+          type: integer
+          minimum: 1
+          maximum: 4
+          description: Present only for sidereal positions.
+      required:
+      - type
+      - longitude
+      - latitude
+      - longitude_speed
+      - retrograde
+      - sign
+      - degrees_in_sign
+    CalculationEngine:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Calculation library.
+        version:
+          type: string
+          description: Library version.
+        ephemeris:
+          type: string
+          description: Ephemeris dataset used for the calculation.
+        timescale:
+          type: string
+          description: Timescale used internally.
+        supported_start:
+          type: string
+          format: date-time
+          description: First supported UTC instant, inclusive.
+        supported_end_exclusive:
+          type: string
+          format: date-time
+          description: Upper UTC bound, excluded from the supported interval.
+        outer_planet_targets:
+          type: string
+          description: Targets used for outer-planet positions.
+        node_model:
+          type: string
+          description: Model for the mean lunar nodes Rahu and Ketu.
+        speed_method:
+          type: string
+          description: Method used to calculate longitude speed.
+      required:
+      - name
+      - version
+      - ephemeris
+      - supported_start
+      - supported_end_exclusive
+    Location:
+      type: object
+      properties:
+        lat:
+          type: number
+          minimum: -90
+          maximum: 90
+          description: Latitude in degrees north of the equator; negative values are south.
+        lon:
+          type: number
+          minimum: -180
+          maximum: 180
+          description: Longitude in degrees east of Greenwich; negative values are west. The response always uses lon, regardless of the request alias.
+      required:
+      - lat
+      - lon
+      description: Responses use lon even when the request uses lng or long.
+    Ayanamsa:
+      type:
+      - object
+      - 'null'
+      properties:
+        name:
+          type: string
+          description: Name of the sidereal offset model.
+        model:
+          type: string
+          description: Calculation convention used to approximate the offset.
+        degrees:
+          type: number
+          description: Offset applied to tropical longitude, in degrees.
+      required:
+      - name
+      - model
+      - degrees
+      description: Applied sidereal offset. Null for tropical positions.
+    CalculationError:
+      description: A structured error from the calculation service or an error generated by the API. Generated errors always include code. Upstream errors can omit code or use service-specific codes.
+      anyOf:
+      - $ref: '#/components/schemas/Error'
+      - $ref: '#/components/schemas/ValidationError'
+    Observer:
+      type: object
+      properties:
+        reference_frame:
+          type: string
+          description: Reference frame for the topocentric positions.
+        azimuth_convention:
+          type: string
+          description: Direction and origin of the azimuth measurement.
+        horizon_deg:
+          type: number
+          description: Horizon altitude used for above_horizon, in degrees.
+        elevation_m:
+          type: number
+          description: Assumed observer elevation, in metres. This API does not accept an elevation parameter.
+        bodies:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/ObserverBody'
+          description: The ten physical bodies; Rahu and Ketu are excluded.
+      required:
+      - reference_frame
+      - azimuth_convention
+      - horizon_deg
+      - elevation_m
+      - bodies
+      description: Optional topocentric data, present only with include=observer and coordinates. Geometric body-center altitudes exclude atmospheric refraction.
+    ValidationError:
+      type: object
+      properties:
+        detail:
+          type: array
+          items:
+            type: object
+            properties:
+              loc:
+                type: array
+                items:
+                  oneOf:
+                  - type: string
+                  - type: integer
+              msg:
+                type: string
+              type:
+                type: string
+              input:
+                description: The invalid value, when supplied by the upstream validator.
+              ctx:
+                type: object
+                additionalProperties: true
+            required:
+            - loc
+            - msg
+            - type
+      required:
+      - detail
+      description: Upstream parameter type errors can use this format with HTTP 422.
+  examples:
+    TropicalPositions:
+      summary: Tropical positions without coordinates; 2000-01-01T12:00:00Z.
+      value:
+        datetime: '2000-01-01T12:00:00Z'
+        zodiac: tropical
+        ayanamsa: null
+        node_convention: mean
+        reference_frame: geocentric apparent ecliptic and true equinox of date
+        units:
+          longitude: degrees
+          latitude: degrees
+          degrees_in_sign: degrees
+          longitude_speed: degrees/day
+        engine:
+          name: Skyfield
+          version: '1.55'
+          ephemeris: JPL DE421
+          timescale: Skyfield bundled timescale; UTC input converted to TT/TDB
+          supported_start: '1900-01-01T00:00:00Z'
+          supported_end_exclusive: '2053-01-01T00:00:00Z'
+          outer_planet_targets: planetary system barycenters
+          node_model: Meeus mean lunar node; not an apparent observed body
+          speed_method: central difference, +/-0.001 TT day, selected zodiac
+        bodies:
+          sun:
+            type: luminary
+            longitude: 280.3689225724006
+            latitude: 0.0002274254618305167
+            longitude_speed: 1.0194338826181593
+            retrograde: false
+            sign: Capricorn
+            degrees_in_sign: 10.368922572400606
+          moon:
+            type: luminary
+            longitude: 223.32380023432404
+            latitude: 5.170739676649003
+            longitude_speed: 12.021325988527565
+            retrograde: false
+            sign: Scorpio
+            degrees_in_sign: 13.32380023432404
+          mercury:
+            type: planet
+            longitude: 271.8892831534986
+            latitude: -0.9948296035348227
+            longitude_speed: 1.5562557636883412
+            retrograde: false
+            sign: Capricorn
+            degrees_in_sign: 1.8892831534985817
+          venus:
+            type: planet
+            longitude: 241.56579308502825
+            latitude: 2.066348949824587
+            longitude_speed: 1.2090425491919632
+            retrograde: false
+            sign: Sagittarius
+            degrees_in_sign: 1.5657930850282469
+          mars:
+            type: planet
+            longitude: 327.9633055563196
+            latitude: -1.0677852457020913
+            longitude_speed: 0.7756738288549059
+            retrograde: false
+            sign: Aquarius
+            degrees_in_sign: 27.963305556319597
+          jupiter:
+            type: planet
+            longitude: 25.253086881939037
+            latitude: -1.262192890629165
+            longitude_speed: 0.04076135257946589
+            retrograde: false
+            sign: Aries
+            degrees_in_sign: 25.253086881939037
+          saturn:
+            type: planet
+            longitude: 40.39566304174984
+            latitude: -2.4448548942230715
+            longitude_speed: -0.019944906057389744
+            retrograde: true
+            sign: Taurus
+            degrees_in_sign: 10.395663041749842
+          uranus:
+            type: planet
+            longitude: 314.8091908490416
+            latitude: -0.6583280055723225
+            longitude_speed: 0.05034367853795629
+            retrograde: false
+            sign: Aquarius
+            degrees_in_sign: 14.809190849041613
+          neptune:
+            type: planet
+            longitude: 303.1930147957128
+            latitude: 0.2349968989356531
+            longitude_speed: 0.03557034031587136
+            retrograde: false
+            sign: Aquarius
+            degrees_in_sign: 3.193014795712827
+          pluto:
+            type: dwarf_planet
+            longitude: 251.45478064305772
+            latitude: 10.85522999082413
+            longitude_speed: 0.035153525544728836
+            retrograde: false
+            sign: Sagittarius
+            degrees_in_sign: 11.454780643057717
+          rahu:
+            type: lunar_node
+            longitude: 125.04063856475453
+            latitude: 0
+            longitude_speed: -0.052951725507455194
+            retrograde: true
+            sign: Leo
+            degrees_in_sign: 5.040638564754531
+          ketu:
+            type: lunar_node
+            longitude: 305.04063856475454
+            latitude: 0
+            longitude_speed: -0.052951725507455194
+            retrograde: true
+            sign: Aquarius
+            degrees_in_sign: 5.040638564754545
+    SiderealPositions:
+      summary: Sidereal positions with observer data; 2000-01-01T12:00:00Z, Mumbai.
+      value:
+        datetime: '2000-01-01T12:00:00Z'
+        zodiac: sidereal
+        ayanamsa:
+          name: Lahiri
+          model: J2000 anchor + IAU 2006 precession (approximation)
+          degrees: 23.85322235640474
+        node_convention: mean
+        reference_frame: geocentric apparent ecliptic and true equinox of date
+        units:
+          longitude: degrees
+          latitude: degrees
+          degrees_in_sign: degrees
+          longitude_speed: degrees/day
+        engine:
+          name: Skyfield
+          version: '1.55'
+          ephemeris: JPL DE421
+          timescale: Skyfield bundled timescale; UTC input converted to TT/TDB
+          supported_start: '1900-01-01T00:00:00Z'
+          supported_end_exclusive: '2053-01-01T00:00:00Z'
+          outer_planet_targets: planetary system barycenters
+          node_model: Meeus mean lunar node; not an apparent observed body
+          speed_method: central difference, +/-0.001 TT day, selected zodiac
+        bodies:
+          sun:
+            type: luminary
+            longitude: 256.5157002159959
+            latitude: 0.0002274254618305167
+            longitude_speed: 1.019393589132278
+            retrograde: false
+            sign: Sagittarius
+            degrees_in_sign: 16.515700215995878
+            nakshatra: Purva Ashadha
+            pada: 1
+          moon:
+            type: luminary
+            longitude: 199.4705778779193
+            latitude: 5.170739676649003
+            longitude_speed: 12.021285695027473
+            retrograde: false
+            sign: Libra
+            degrees_in_sign: 19.47057787791931
+            nakshatra: Swati
+            pada: 4
+          mercury:
+            type: planet
+            longitude: 248.03606079709385
+            latitude: -0.9948296035348227
+            longitude_speed: 1.5562154701882491
+            retrograde: false
+            sign: Sagittarius
+            degrees_in_sign: 8.036060797093853
+            nakshatra: Mula
+            pada: 3
+          venus:
+            type: planet
+            longitude: 217.71257072862352
+            latitude: 2.066348949824587
+            longitude_speed: 1.2090022556918711
+            retrograde: false
+            sign: Scorpio
+            degrees_in_sign: 7.712570728623518
+            nakshatra: Anuradha
+            pada: 2
+          mars:
+            type: planet
+            longitude: 304.11008319991487
+            latitude: -1.0677852457020913
+            longitude_speed: 0.7756335353690247
+            retrograde: false
+            sign: Aquarius
+            degrees_in_sign: 4.110083199914868
+            nakshatra: Dhanishta
+            pada: 4
+          jupiter:
+            type: planet
+            longitude: 1.3998645255342979
+            latitude: -1.262192890629165
+            longitude_speed: 0.040721059079373845
+            retrograde: false
+            sign: Aries
+            degrees_in_sign: 1.3998645255342979
+            nakshatra: Ashwini
+            pada: 1
+          saturn:
+            type: planet
+            longitude: 16.542440685345102
+            latitude: -2.4448548942230715
+            longitude_speed: -0.019985199557481792
+            retrograde: true
+            sign: Aries
+            degrees_in_sign: 16.542440685345102
+            nakshatra: Bharani
+            pada: 1
+          uranus:
+            type: planet
+            longitude: 290.9559684926369
+            latitude: -0.6583280055723225
+            longitude_speed: 0.0503033850520751
+            retrograde: false
+            sign: Capricorn
+            degrees_in_sign: 20.955968492636885
+            nakshatra: Shravana
+            pada: 4
+          neptune:
+            type: planet
+            longitude: 279.3397924393081
+            latitude: 0.2349968989356531
+            longitude_speed: 0.03553004682999017
+            retrograde: false
+            sign: Capricorn
+            degrees_in_sign: 9.339792439308098
+            nakshatra: Uttara Ashadha
+            pada: 4
+          pluto:
+            type: dwarf_planet
+            longitude: 227.601558286653
+            latitude: 10.85522999082413
+            longitude_speed: 0.03511323204463679
+            retrograde: false
+            sign: Scorpio
+            degrees_in_sign: 17.60155828665299
+            nakshatra: Jyeshtha
+            pada: 1
+          rahu:
+            type: lunar_node
+            longitude: 101.18741620834979
+            latitude: 0
+            longitude_speed: -0.05299201900754724
+            retrograde: true
+            sign: Cancer
+            degrees_in_sign: 11.187416208349788
+            nakshatra: Pushya
+            pada: 3
+          ketu:
+            type: lunar_node
+            longitude: 281.18741620834976
+            latitude: 0
+            longitude_speed: -0.05299201899333639
+            retrograde: true
+            sign: Capricorn
+            degrees_in_sign: 11.18741620834976
+            nakshatra: Shravana
+            pada: 1
+        observer:
+          reference_frame: topocentric apparent; geometric altitude without atmospheric refraction
+          azimuth_convention: degrees clockwise from true north
+          horizon_deg: 0
+          elevation_m: 0
+          bodies:
+            sun:
+              altitude_deg: 8.048691694781233
+              azimuth_deg: 242.15878242965698
+              distance_km: 147102819.5837628
+              above_horizon: true
+            moon:
+              altitude_deg: -42.67533014462774
+              azimuth_deg: 272.4194039448816
+              distance_km: 406711.00531416765
+              above_horizon: false
+            mercury:
+              altitude_deg: -0.2525352561553556
+              azimuth_deg: 244.1563658779804
+              distance_km: 211751240.08849847
+              above_horizon: false
+            venus:
+              altitude_deg: -27.395709878969004
+              azimuth_deg: 258.5838860282115
+              distance_km: 170182363.0448499
+              above_horizon: false
+            mars:
+              altitude_deg: 50.679813976316034
+              azimuth_deg: 216.57959448819702
+              distance_km: 276704426.0667476
+              above_horizon: true
+            jupiter:
+              altitude_deg: 58.62154390020443
+              azimuth_deg: 105.26839397994608
+              distance_km: 691312515.4451069
+              above_horizon: true
+            saturn:
+              altitude_deg: 45.94052759036681
+              azimuth_deg: 91.43570397599358
+              distance_km: 1294435331.2001705
+              above_horizon: true
+            uranus:
+              altitude_deg: 39.54744745151479
+              azimuth_deg: 226.59048601247054
+              distance_km: 3100736503.040549
+              above_horizon: true
+            neptune:
+              altitude_deg: 29.388131983845152
+              azimuth_deg: 233.53050716944273
+              distance_km: 4641195933.166662
+              above_horizon: true
+            pluto:
+              altitude_deg: -14.82592138505238
+              azimuth_deg: 262.83634531763005
+              distance_km: 4647164671.719965
+              above_horizon: false
+        location:
+          lat: 19.076
+          lon: 72.878
+        timezone: Asia/Kolkata
+externalDocs:
+  description: Interactive API explorer
+  url: https://freehoroscopeapi.com/explorer
